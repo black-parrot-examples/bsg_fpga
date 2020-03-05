@@ -2,6 +2,7 @@
 /* Steps for opening Vivado project: */
 
 cd black-parrot
+git checkout 5440781
 make libs
 make ucode
 
