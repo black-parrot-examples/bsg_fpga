@@ -118,14 +118,14 @@ module bp_stream_nbf_loader
   begin
   
     io_cmd.data = curr_nbf.data;
-    io_cmd.payload = '0;
-    io_cmd.addr = curr_nbf.addr;
-    io_cmd.msg_type = e_cce_mem_uc_wr;
+    io_cmd.header.payload = '0;
+    io_cmd.header.addr = curr_nbf.addr;
+    io_cmd.header.msg_type = e_cce_mem_uc_wr;
     
     case (curr_nbf.opcode)
-      2: io_cmd.size = e_mem_size_4;
-      3: io_cmd.size = e_mem_size_8;
-      default: io_cmd.size = e_mem_size_4;
+      2: io_cmd.header.size = e_mem_size_4;
+      3: io_cmd.header.size = e_mem_size_8;
+      default: io_cmd.header.size = e_mem_size_4;
     endcase
   
     state_n = state_r;
@@ -140,8 +140,8 @@ module bp_stream_nbf_loader
           begin
             io_cmd_v_lo = ~credits_full_lo;
             io_cmd.data = '0;
-            io_cmd.addr = counter_r;
-            io_cmd.size = e_mem_size_8;
+            io_cmd.header.addr = counter_r;
+            io_cmd.header.size = e_mem_size_8;
             if (io_cmd_yumi_i)
               begin
                 counter_n = counter_r + 32'h8;
@@ -161,8 +161,8 @@ module bp_stream_nbf_loader
             incoming_nbf_yumi_li = io_cmd_yumi_i;
             if (curr_nbf.opcode == 8'hFF)
               begin
-                io_cmd.addr = 32'h00000000;
-                io_cmd.size = e_mem_size_8;
+                io_cmd.header.addr = 32'h00000000;
+                io_cmd.header.size = e_mem_size_8;
                 io_cmd.data = '0;
                 if (io_cmd_yumi_i)
                   begin

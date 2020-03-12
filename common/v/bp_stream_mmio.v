@@ -74,10 +74,10 @@ module bp_stream_mmio
   ) queue_fifo
   (.clk_i  (clk_i)
   ,.reset_i(reset_i)
-  ,.data_i ({io_cmd.msg_type, io_cmd.addr, io_cmd.payload, io_cmd.size})
+  ,.data_i (io_cmd.header)
   ,.v_i    (queue_fifo_v_li)
   ,.ready_o(queue_fifo_ready_lo)
-  ,.data_o ({{io_resp.msg_type, io_resp.addr, io_resp.payload, io_resp.size}})
+  ,.data_o (io_resp.header)
   ,.v_o    (queue_fifo_v_lo)
   ,.yumi_i (queue_fifo_yumi_li)
   );
@@ -110,7 +110,7 @@ module bp_stream_mmio
         if (io_cmd_v_i & out_fifo_ready_lo & queue_fifo_ready_lo)
           begin
             out_fifo_v_li = 1'b1;
-            out_fifo_data_li = io_cmd.addr;
+            out_fifo_data_li = io_cmd.header.addr;
             state_n = 1;
           end
       end
@@ -167,7 +167,7 @@ module bp_stream_mmio
     io_resp.data = '0;
     if (queue_fifo_v_lo & io_resp_ready_lo)
       begin
-        case (io_resp.msg_type)
+        case (io_resp.header.msg_type)
           e_cce_mem_rd
           ,e_cce_mem_wr
           ,e_cce_mem_uc_rd:
