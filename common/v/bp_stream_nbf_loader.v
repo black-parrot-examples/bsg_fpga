@@ -157,15 +157,18 @@ module bp_stream_nbf_loader
       begin
         if (incoming_nbf_v_lo) 
           begin
+            io_cmd_v_lo = ~credits_full_lo;
+            incoming_nbf_yumi_li = io_cmd_yumi_i;
             if (curr_nbf.opcode == 8'hFF)
               begin
-                done_n = 1'b1;
-                state_n = 2;
-              end
-            else 
-              begin
-                io_cmd_v_lo = ~credits_full_lo;
-                incoming_nbf_yumi_li = io_cmd_yumi_i;
+                io_cmd.addr = 32'h00000000;
+                io_cmd.size = e_mem_size_8;
+                io_cmd.data = '0;
+                if (io_cmd_yumi_i)
+                  begin
+                    done_n = 1'b1;
+                    state_n = 2;
+                  end
               end
           end
       end
