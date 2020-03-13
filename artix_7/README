@@ -2,8 +2,8 @@
 /* Steps for opening Vivado project: */
 
 cd black-parrot
-git checkout 5440781
-make libs
+git checkout dev
+make update_libs
 make ucode
 
 vivado -mode batch -source bp_fpga.tcl
