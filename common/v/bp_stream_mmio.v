@@ -146,8 +146,8 @@ module bp_stream_mmio
   logic [dword_width_p-1:0] sipo_data_lo;;
   
   bsg_serial_in_parallel_out_full
- #(.width_p(dword_width_p/stream_data_width_p)
-  ,.els_p  (2)
+ #(.width_p(stream_data_width_p)
+  ,.els_p  (dword_width_p/stream_data_width_p)
   ) sipo
   (.clk_i  (clk_i)
   ,.reset_i(reset_i)
