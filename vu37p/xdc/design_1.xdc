@@ -68,6 +68,15 @@ set_property PULLTYPE PULLUP [get_ports {rstn}]
 # Timing
 set_clock_groups -name async_mig_pcie -asynchronous -group [get_clocks -include_generated_clocks design_1_i/xdma_0/inst/pcie4_ip_i/inst/gt_top_i/diablo_gt.diablo_gt_phy_wrapper/gt_wizard.gtwizard_top_i/design_1_xdma_0_0_pcie4_ip_gt_i/inst/gen_gtwizard_gtye4_top.design_1_xdma_0_0_pcie4_ip_gt_gtwizard_gtye4_inst/gen_gtwizard_gtye4.gen_channel_container[33].gen_enabled_channel.gtye4_channel_wrapper_inst/channel_inst/gtye4_channel_gen.gen_gtye4_channel_inst[0].GTYE4_CHANNEL_PRIM_INST/TXOUTCLK] -group [get_clocks -include_generated_clocks clk_out1_design_1_clk_wiz_0_0]
 
+# Floorplanning
+create_pblock pblock_xdma_0
+add_cells_to_pblock [get_pblocks pblock_xdma_0] [get_cells -quiet [list design_1_i/xdma_0]]
+resize_pblock [get_pblocks pblock_xdma_0] -add {CLOCKREGION_X5Y8:CLOCKREGION_X7Y9}
+
+create_pblock pblock_proc
+add_cells_to_pblock [get_pblocks pblock_proc] [get_cells -quiet [list proc]]
+resize_pblock [get_pblocks pblock_proc] -add {CLOCKREGION_X4Y0:CLOCKREGION_X7Y3}
+
 # HBM dbg_hub
 set_property C_USER_SCAN_CHAIN 1 [get_debug_cores dbg_hub]
 connect_debug_port dbg_hub/clk [get_nets */*/*APB_0_PCLK]
