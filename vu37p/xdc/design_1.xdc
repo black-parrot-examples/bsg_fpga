@@ -73,10 +73,6 @@ create_pblock pblock_xdma_0
 add_cells_to_pblock [get_pblocks pblock_xdma_0] [get_cells -quiet [list design_1_i/xdma_0]]
 resize_pblock [get_pblocks pblock_xdma_0] -add {CLOCKREGION_X5Y8:CLOCKREGION_X7Y9}
 
-create_pblock pblock_proc
-add_cells_to_pblock [get_pblocks pblock_proc] [get_cells -quiet [list proc]]
-resize_pblock [get_pblocks pblock_proc] -add {CLOCKREGION_X4Y0:CLOCKREGION_X7Y3}
-
 # HBM dbg_hub
 set_property C_USER_SCAN_CHAIN 1 [get_debug_cores dbg_hub]
 connect_debug_port dbg_hub/clk [get_nets */*/*APB_0_PCLK]
