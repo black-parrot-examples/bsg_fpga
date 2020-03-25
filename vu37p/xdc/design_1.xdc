@@ -4,6 +4,25 @@ set_property PACKAGE_PIN U14 [get_ports {pcie_refclk_clk_n}]
 set_property PACKAGE_PIN U15 [get_ports {pcie_refclk_clk_p}]
 
 # PCIe x4 channel
+# First step: reset locations to default
+set_property PACKAGE_PIN {}  [get_ports {pci_express_x4_rxn[0]}]
+set_property PACKAGE_PIN {}  [get_ports {pci_express_x4_rxn[1]}]
+set_property PACKAGE_PIN {}  [get_ports {pci_express_x4_rxn[2]}]
+set_property PACKAGE_PIN {}  [get_ports {pci_express_x4_rxn[3]}]
+set_property PACKAGE_PIN {}  [get_ports {pci_express_x4_rxp[0]}]
+set_property PACKAGE_PIN {}  [get_ports {pci_express_x4_rxp[1]}]
+set_property PACKAGE_PIN {}  [get_ports {pci_express_x4_rxp[2]}]
+set_property PACKAGE_PIN {}  [get_ports {pci_express_x4_rxp[3]}]
+set_property PACKAGE_PIN {}  [get_ports {pci_express_x4_txn[0]}]
+set_property PACKAGE_PIN {}  [get_ports {pci_express_x4_txn[1]}]
+set_property PACKAGE_PIN {}  [get_ports {pci_express_x4_txn[2]}]
+set_property PACKAGE_PIN {}  [get_ports {pci_express_x4_txn[3]}]
+set_property PACKAGE_PIN {}  [get_ports {pci_express_x4_txp[0]}]
+set_property PACKAGE_PIN {}  [get_ports {pci_express_x4_txp[1]}]
+set_property PACKAGE_PIN {}  [get_ports {pci_express_x4_txp[2]}]
+set_property PACKAGE_PIN {}  [get_ports {pci_express_x4_txp[3]}]
+
+# Second step: set new locations
 set_property PACKAGE_PIN R5  [get_ports {pci_express_x4_rxn[0]}]
 set_property PACKAGE_PIN P3  [get_ports {pci_express_x4_rxn[1]}]
 set_property PACKAGE_PIN N1  [get_ports {pci_express_x4_rxn[2]}]
