@@ -9,6 +9,7 @@ module bsg_m_axi_lite_to_fifo
  #(parameter addr_width_p = 32
   ,parameter data_width_p = 32
   ,parameter buffer_size_p = 32
+  ,parameter num_repeater_nodes_p = 0
 
   ,localparam buffer_counter_width_lp = `BSG_WIDTH(buffer_size_p)
   )
@@ -54,13 +55,74 @@ module bsg_m_axi_lite_to_fifo
   ,output                    ready_o
   );
   
+  
+  /************************ repeater nodes ************************/
+  
+  logic v_lo, yumi_li, v_li, ready_lo;
+  logic [data_width_p-1:0] data_li, data_lo;
+  logic [addr_width_p-1:0] addr_lo;
+  
+  logic [num_repeater_nodes_p:0] rep_v_lo, rep_ready_li, rep_v_li, rep_ready_lo;
+  logic [num_repeater_nodes_p:0][data_width_p-1:0] rep_data_li, rep_data_lo;
+  logic [num_repeater_nodes_p:0][addr_width_p-1:0] rep_addr_lo;
+  
+  for (genvar i = 0; i < num_repeater_nodes_p; i++)
+  begin: repeater
+    bsg_two_fifo
+   #(.width_p(addr_width_p+data_width_p))
+    A_to_B
+    (.clk_i  (clk_i)
+    ,.reset_i(reset_i)
+    ,.v_i    (rep_v_lo[i])
+    ,.data_i ({rep_addr_lo[i], rep_data_lo[i]})
+    ,.ready_o(rep_ready_li[i])
+    ,.v_o    (rep_v_lo[i+1])
+    ,.data_o ({rep_addr_lo[i+1], rep_data_lo[i+1]})
+    ,.yumi_i (rep_v_lo[i+1] & rep_ready_li[i+1])
+    );
+
+    bsg_two_fifo
+   #(.width_p(data_width_p))
+    B_to_A
+    (.clk_i  (clk_i)
+    ,.reset_i(reset_i)
+    ,.v_i    (rep_v_li[i+1])
+    ,.data_i (rep_data_li[i+1])
+    ,.ready_o(rep_ready_lo[i+1])
+    ,.v_o    (rep_v_li[i])
+    ,.data_o (rep_data_li[i])
+    ,.yumi_i (rep_v_li[i] & rep_ready_lo[i])
+    );
+  end
+  
+  // A side stitching
+  assign rep_v_lo    [0] = v_lo;
+  assign rep_addr_lo [0] = addr_lo;
+  assign rep_data_lo [0] = data_lo;
+  assign yumi_li         = rep_v_lo[0] & rep_ready_li[0];
+
+  assign v_li            = rep_v_li[0];
+  assign data_li         = rep_data_li[0];
+  assign rep_ready_lo[0] = ready_lo;
+  
+  // B side stitching
+  assign v_o = rep_v_lo[num_repeater_nodes_p];
+  assign addr_o = rep_addr_lo[num_repeater_nodes_p];
+  assign data_o = rep_data_lo[num_repeater_nodes_p];
+  assign rep_ready_li[num_repeater_nodes_p] = yumi_i;
+  
+  assign rep_v_li[num_repeater_nodes_p] = v_i;
+  assign rep_data_li[num_repeater_nodes_p] = data_i;
+  assign ready_o = rep_ready_lo[num_repeater_nodes_p];
+  
+  
   /************************ axi_lite read ************************/
   
   logic buffer_async_fifo_v_lo, buffer_async_fifo_ready_li;
   logic [data_width_p-1:0] buffer_async_fifo_data_lo;
   
   logic buffer_async_fifo_full_lo;
-  assign ready_o = ~buffer_async_fifo_full_lo;
+  assign ready_lo = ~buffer_async_fifo_full_lo;
   
   bsg_async_fifo
  #(.lg_size_p(8)
@@ -68,8 +130,8 @@ module bsg_m_axi_lite_to_fifo
   ) buffer_async_fifo
   (.w_clk_i  (clk_i)
   ,.w_reset_i(reset_i)
-  ,.w_enq_i  (v_i & ready_o)
-  ,.w_data_i (data_i)
+  ,.w_enq_i  (v_li & ready_lo)
+  ,.w_data_i (data_li)
   ,.w_full_o (buffer_async_fifo_full_lo)
 
   ,.r_clk_i  (pcie_clk_i)
@@ -149,7 +211,7 @@ module bsg_m_axi_lite_to_fifo
 
   // address and data fifo
   logic addr_fifo_v_lo, data_fifo_v_lo;
-  assign v_o = addr_fifo_v_lo & data_fifo_v_lo;
+  assign v_lo = addr_fifo_v_lo & data_fifo_v_lo;
   
   logic data_fifo_ready_lo, b_fifo_ready_lo;
   assign wready_o = data_fifo_ready_lo & b_fifo_ready_lo;
@@ -187,8 +249,8 @@ module bsg_m_axi_lite_to_fifo
 
   ,.r_clk_i  (clk_i)
   ,.r_reset_i(reset_i)
-  ,.r_deq_i  (yumi_i)
-  ,.r_data_o (addr_o)
+  ,.r_deq_i  (yumi_li)
+  ,.r_data_o (addr_lo)
   ,.r_valid_o(addr_fifo_v_lo)
   );
   
@@ -204,8 +266,8 @@ module bsg_m_axi_lite_to_fifo
 
   ,.r_clk_i  (clk_i)
   ,.r_reset_i(reset_i)
-  ,.r_deq_i  (yumi_i)
-  ,.r_data_o (data_o)
+  ,.r_deq_i  (yumi_li)
+  ,.r_data_o (data_lo)
   ,.r_valid_o(data_fifo_v_lo)
   );
 
