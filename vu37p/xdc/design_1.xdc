@@ -73,6 +73,22 @@ create_pblock pblock_xdma_0
 add_cells_to_pblock [get_pblocks pblock_xdma_0] [get_cells -quiet [list design_1_i/xdma_0]]
 resize_pblock [get_pblocks pblock_xdma_0] -add {CLOCKREGION_X5Y8:CLOCKREGION_X7Y9}
 
+create_pblock pblock_tile_y0x0
+add_cells_to_pblock [get_pblocks pblock_tile_y0x0] [get_cells -quiet [list proc/cc/y[0].x[0].tile_node/tile]]
+resize_pblock [get_pblocks pblock_tile_y0x0] -add {CLOCKREGION_X0Y4:CLOCKREGION_X3Y5}
+
+create_pblock pblock_tile_y0x1
+add_cells_to_pblock [get_pblocks pblock_tile_y0x1] [get_cells -quiet [list proc/cc/y[0].x[1].tile_node/tile]]
+resize_pblock [get_pblocks pblock_tile_y0x1] -add {CLOCKREGION_X4Y4:CLOCKREGION_X7Y5}
+
+create_pblock pblock_tile_y1x0
+add_cells_to_pblock [get_pblocks pblock_tile_y1x0] [get_cells -quiet [list proc/cc/y[1].x[0].tile_node/tile]]
+resize_pblock [get_pblocks pblock_tile_y1x0] -add {CLOCKREGION_X0Y2:CLOCKREGION_X3Y3}
+
+create_pblock pblock_tile_y1x1
+add_cells_to_pblock [get_pblocks pblock_tile_y1x1] [get_cells -quiet [list proc/cc/y[1].x[1].tile_node/tile]]
+resize_pblock [get_pblocks pblock_tile_y1x1] -add {CLOCKREGION_X4Y2:CLOCKREGION_X7Y3}
+
 # HBM dbg_hub
 set_property C_USER_SCAN_CHAIN 1 [get_debug_cores dbg_hub]
 connect_debug_port dbg_hub/clk [get_nets */*/*APB_0_PCLK]
