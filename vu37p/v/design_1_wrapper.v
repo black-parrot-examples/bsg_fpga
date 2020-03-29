@@ -25,6 +25,8 @@ module design_1_wrapper
    `declare_bp_proc_params(bp_params_p)
    `declare_bp_me_if_widths(paddr_width_p, cce_block_width_p, lce_id_width_p, lce_assoc_p)
    
+  ,parameter load_nbf_p = 1
+   
   ,localparam cache_addr_width_p = 30 - `BSG_SAFE_CLOG2(1) // one cache_dma
   ,localparam axi_id_width_p     = 1
   ,localparam axi_addr_width_p   = 30
@@ -383,7 +385,10 @@ bp_me_cce_to_mem_link_client
    );
 
 
-logic nbf_done_lo, cfg_done_lo, dram_sel_lo;
+  logic nbf_done_lo, cfg_done_lo, dram_sel_lo;
+
+  if (load_nbf_p == 0)
+  begin
     
     assign nbf_cmd_lo = '0;
     assign nbf_cmd_v_lo = '0;
@@ -434,6 +439,22 @@ logic nbf_done_lo, cfg_done_lo, dram_sel_lo;
     ,.mem_resp_v_i(a_dram_resp_v_lo)
     ,.mem_resp_ready_o(a_dram_resp_ready_li)
     );
+  
+  end
+  else
+  begin
+    
+    assign nbf_cmd_lo = nbf_dram_cmd_li;
+    assign nbf_cmd_v_lo = nbf_dram_cmd_v_li;
+    assign nbf_dram_cmd_yumi_lo = nbf_cmd_v_lo & nbf_cmd_ready_li;
+    
+    assign nbf_dram_resp_lo = nbf_resp_li;
+    assign nbf_dram_resp_v_lo = nbf_resp_v_li;
+    assign nbf_resp_ready_lo = nbf_dram_resp_ready_li;
+    
+    assign dram_sel_lo = 1'b1;
+    
+  end
     
 
 always_comb
@@ -476,7 +497,7 @@ bp_cce_mmio_cfg_loader
     ,.inst_ram_els_p(num_cce_instr_ram_els_p)
     ,.cce_ucode_filename_p(cce_ucode_filename_lp)
     ,.skip_ram_init_p(0)
-    ,.clear_freeze_p(1)
+    ,.clear_freeze_p((load_nbf_p == 0))
     )
   cfg_loader
   (.clk_i(mig_clk)
@@ -536,9 +557,10 @@ always_comb
  #(.bp_params_p(bp_params_p)
   ,.stream_addr_width_p(32)
   ,.stream_data_width_p(32)
+  ,.clear_freeze_p((load_nbf_p != 0))
   ) host        
   (.clk_i          (mig_clk)
-  ,.reset_i        (mig_reset)
+  ,.reset_i        (mig_reset | (~cfg_done_lo & (load_nbf_p != 0)))
   ,.prog_done_o    (nbf_done_lo)
   
   ,.io_cmd_i       (host_cmd_li)

@@ -15,6 +15,7 @@ module bp_stream_host
   
   ,parameter stream_addr_width_p = 32
   ,parameter stream_data_width_p = 32
+  ,parameter clear_freeze_p = 0
 
   ,localparam bsg_ready_and_link_sif_width_lp = `bsg_ready_and_link_sif_width(io_noc_flit_width_p)
   )
@@ -68,6 +69,7 @@ module bp_stream_host
   bp_stream_nbf_loader
  #(.bp_params_p(bp_params_p)
   ,.stream_data_width_p(stream_data_width_p)
+  ,.clear_freeze_p(clear_freeze_p)
   ) nbf_loader
   (.clk_i          (clk_i)
   ,.reset_i        (reset_i)

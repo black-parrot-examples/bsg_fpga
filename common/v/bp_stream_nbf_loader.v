@@ -18,6 +18,7 @@ module bp_stream_nbf_loader
   `declare_bp_me_if_widths(paddr_width_p, cce_block_width_p, lce_id_width_p, lce_assoc_p)
   
   ,parameter stream_data_width_p = 32
+  ,parameter clear_freeze_p = 0
 
   ,parameter nbf_opcode_width_p = 8
   ,parameter nbf_addr_width_p = paddr_width_p
@@ -106,12 +107,13 @@ module bp_stream_nbf_loader
   begin
 
   end
-
-  logic done_r, done_n;
-  assign done_o = done_r & credits_empty_lo;
   
   logic [31:0] counter_r, counter_n;
   logic [1:0] state_r, state_n;
+  
+  assign done_o = (state_r == 3) & credits_empty_lo;
+  
+  bp_local_addr_s freeze_addr;
  
  // combinational
   always_comb 
@@ -122,6 +124,11 @@ module bp_stream_nbf_loader
     io_cmd.header.addr = curr_nbf.addr;
     io_cmd.header.msg_type = e_cce_mem_uc_wr;
     
+    freeze_addr.nonlocal = '0;
+    freeze_addr.cce      = counter_r;
+    freeze_addr.dev      = cfg_dev_gp;
+    freeze_addr.addr     = bp_cfg_reg_freeze_gp;
+    
     case (curr_nbf.opcode)
       2: io_cmd.header.size = e_mem_size_4;
       3: io_cmd.header.size = e_mem_size_8;
@@ -130,7 +137,6 @@ module bp_stream_nbf_loader
   
     state_n = state_r;
     counter_n = counter_r;
-    done_n = done_r;
     io_cmd_v_lo = 1'b0;
     incoming_nbf_yumi_li = 1'b0;
     
@@ -161,30 +167,53 @@ module bp_stream_nbf_loader
             incoming_nbf_yumi_li = io_cmd_yumi_i;
             if (curr_nbf.opcode == 8'hFF)
               begin
-                io_cmd.header.addr = 32'h00000000;
-                io_cmd.header.size = e_mem_size_8;
-                io_cmd.data = '0;
-                if (io_cmd_yumi_i)
+                if (clear_freeze_p == 0)
                   begin
-                    done_n = 1'b1;
+                    io_cmd.header.addr = 32'h00000000;
+                    io_cmd.header.size = e_mem_size_8;
+                    io_cmd.data = '0;
+                    if (io_cmd_yumi_i)
+                      begin
+                        state_n = 3;
+                      end
+                  end
+                else
+                  begin
+                    io_cmd_v_lo = 1'b0;
+                    incoming_nbf_yumi_li = 1'b0;
                     state_n = 2;
                   end
               end
           end
       end
+    else if (state_r == 2)
+      begin
+        io_cmd_v_lo = ~credits_full_lo;
+        io_cmd.data = '0;
+        io_cmd.header.addr = freeze_addr;
+        io_cmd.header.size = e_mem_size_8;
+        if (io_cmd_yumi_i)
+          begin
+            counter_n = counter_r + 32'd1;
+            if (counter_r == num_core_p-1)
+              begin
+                counter_n = '0;
+                state_n = 3;
+              end
+          end
+      end
+      
   end
 
   // sequential
   always_ff @(posedge clk_i)
     if (reset_i) 
       begin
-        done_r <= 1'b0;
         state_r <= '0;
         counter_r <= 32'h80000000;
       end
     else 
       begin
-        done_r <= done_n;
         state_r <= state_n;
         counter_r <= counter_n;
       end
