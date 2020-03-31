@@ -1,21 +1,28 @@
 
-/* Steps for opening Vivado project: */
+/* Prerequisite */
+1. Vivado 2019.1 installed, source <dir_to_vivado>/bin/settings64.sh
+2. export XVC_URL=<ip_addr:port_num>
 
-cd black-parrot
-git checkout dev
-make update_libs
-make ucode
+/* first time setup */
+    make libs
+    make build
 
-vivado -mode batch -source bp_fpga.tcl
-vivado vu37p_test/vu37p_test.xpr
+/* generate bitstream */
+option 1:
+    make generate_bitstream
+option 2 (when debugging):
+    make open
+    click on generate bitstream button
 
+/* program FPGA */
+    make program_fpga
 
-/* Steps for updating project tcl: */
+/* update project tcl (when project filelist updated) */
+    make update_tcl
 
-vivado -mode tcl
-open_project ./vu37p_test/vu37p_test.xpr
-write_project_tcl -force bp_fpga.tcl
-exit
+/* clean project */
+    make clean_libs
+    make clean_build
 
 
 /* Switching between single-core and dual-core settings */
