@@ -92,3 +92,6 @@ resize_pblock [get_pblocks pblock_tile_y1x1] -add {CLOCKREGION_X4Y2:CLOCKREGION_
 # HBM dbg_hub
 set_property C_USER_SCAN_CHAIN 1 [get_debug_cores dbg_hub]
 connect_debug_port dbg_hub/clk [get_nets */*/*APB_0_PCLK]
+
+# Bitstream
+set_property BITSTREAM.GENERAL.COMPRESS        True  [current_design]
