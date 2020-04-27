@@ -280,55 +280,55 @@ always_comb case(addr_i)
         53: data_o = width_p ' (26'b0001___01___010110_1_1001___100000100); // 0x055B304
                                  // #SEND  en   id=23  d l=9   {reset, cord=5}
         54: data_o = width_p ' (26'b0001___01___010111_1_1001___100000101); // 0x055F305
-                                 // # Reset GW Router Control and set cord to 0
-                                 // #SEND  en   id=19  d l=9   {reset, cord=0}
-        55: data_o = width_p ' (26'b0001___10___010011_1_1001___100000000); // 0x064F300
+                                 // # Reset GW Router Control and set cord to 7
+                                 // #SEND  en   id=19  d l=9   {reset, cord=7}
+        55: data_o = width_p ' (26'b0001___10___010011_1_1001___100000111); // 0x064F307
                                  // # Reset GW BlackParrot CFG and set dest cord to 3 (CLINT)
                                  // #SEND  en   id=36  d l=9   {reset, cord=9}
         56: data_o = width_p ' (26'b0001___10___100100_1_1001___100000011); // 0x0693303
-                                 // # Reset ASIC BackParrot Control and set dest cord to 0 (DRAM)
-                                 // #SEND  en   id=37 d l=9   {reset, cord=0}
-        57: data_o = width_p ' (26'b0001___01___100101_1_1001___100000000); // 0x0597300
-                                 // # Reset GW BlackParrot Control and set dest cord to 0 (DRAM)
-                                 // #SEND  en   id=37 d l=9   {reset, cord=0}
-        58: data_o = width_p ' (26'b0001___10___100101_1_1001___100000000); // 0x0697300
+                                 // # Reset ASIC BackParrot Control and set dest cord to 7 (DRAM)
+                                 // #SEND  en   id=37 d l=9   {reset, cord=7}
+        57: data_o = width_p ' (26'b0001___01___100101_1_1001___100000111); // 0x0597307
+                                 // # Reset GW BlackParrot Control and set dest cord to 7 (DRAM)
+                                 // #SEND  en   id=37 d l=9   {reset, cord=7}
+        58: data_o = width_p ' (26'b0001___10___100101_1_1001___100000111); // 0x0697307
                                  // ### STEP 2: Perform async token resets
-                                 // # Async token reset for ASIC Prev IO Link
+                                 // # Async token reset for GW Prev IO Link
                                  // #SEND  en   id=13  d l=3   {up_link_reset, down_link_reset, async_token_reset}
-        59: data_o = width_p ' (26'b0001___01___001101_1_0011___000000111); // 0x0536607
-        60: data_o = width_p ' (26'b0001___01___001101_1_0011___000000110); // 0x0536606
-                                 // # Assert async token reset for GW Next IO Link
+        59: data_o = width_p ' (26'b0001___10___001101_1_0011___000000111); // 0x0636607
+        60: data_o = width_p ' (26'b0001___10___001101_1_0011___000000110); // 0x0636606
+                                 // # Assert async token reset for ASIC Next IO Link
                                  // #SEND  en   id=16  d l=3   {up_link_reset, down_link_reset, async_token_reset}
-        61: data_o = width_p ' (26'b0001___10___010000_1_0011___000000111); // 0x0642607
-        62: data_o = width_p ' (26'b0001___10___010000_1_0011___000000110); // 0x0642606
+        61: data_o = width_p ' (26'b0001___01___010000_1_0011___000000111); // 0x0542607
+        62: data_o = width_p ' (26'b0001___01___010000_1_0011___000000110); // 0x0542606
                                  // ### STEP 3: De-assert Upstream IO Links reset
-                                 // # De-assert upstream reset for ASIC Prev IO Link
+                                 // # De-assert upstream reset for GW Prev IO Link
                                  // #SEND  en   id=13  d l=3   {up_link_reset, down_link_reset, async_token_reset}
-        63: data_o = width_p ' (26'b0001___01___001101_1_0011___000000010); // 0x0536602
-                                 // # De-assert upstream reset for GW Next IO Link
+        63: data_o = width_p ' (26'b0001___10___001101_1_0011___000000010); // 0x0636602
+                                 // # De-assert upstream reset for ASIC Next IO Link
                                  // #SEND  en   id=16  d l=3   {up_link_reset, down_link_reset, async_token_reset}
-        64: data_o = width_p ' (26'b0001___10___010000_1_0011___000000010); // 0x0642602
+        64: data_o = width_p ' (26'b0001___01___010000_1_0011___000000010); // 0x0542602
                                  // ### STEP 4: De-assert Downstream IO Links reset
-                                 // # De-assert downstream reset for ASIC Prev IO Link
+                                 // # De-assert downstream reset for GW Prev IO Link
                                  // #SEND  en   id=13  d l=3   {up_link_reset, down_link_reset, async_token_reset}
-        65: data_o = width_p ' (26'b0001___01___001101_1_0011___000000000); // 0x0536600
-                                 // # De-assert downstream reset for GW Next IO Link
+        65: data_o = width_p ' (26'b0001___10___001101_1_0011___000000000); // 0x0636600
+                                 // # De-assert downstream reset for ASIC Next IO Link
                                  // #SEND  en   id=16  d l=3   {up_link_reset, down_link_reset, async_token_reset}
-        66: data_o = width_p ' (26'b0001___10___010000_1_0011___000000000); // 0x0642600
+        66: data_o = width_p ' (26'b0001___01___010000_1_0011___000000000); // 0x0542600
                                  // ### STEP 5/6: De-assert Upstream/Downstream CORE Links reset
-                                 // # De-assert upstream/downstream reset for ASIC Prev CORE Link
+                                 // # De-assert upstream/downstream reset for GW Prev CORE Link
                                  // #SEND  en   id=14  d l=2   {up_link_reset, down_link_reset}
-        67: data_o = width_p ' (26'b0001___01___001110_1_0010___000000000); // 0x053A400
-                                 // # De-assert upstream/downstream reset for GW Next CORE Link
+        67: data_o = width_p ' (26'b0001___10___001110_1_0010___000000000); // 0x063A400
+                                 // # De-assert upstream/downstream reset for ASIC Next CORE Link
                                  // #SEND  en   id=17  d l=2   {up_link_reset, down_link_reset}
-        68: data_o = width_p ' (26'b0001___10___010001_1_0010___000000000); // 0x0646400
+        68: data_o = width_p ' (26'b0001___01___010001_1_0010___000000000); // 0x0546400
                                  // ### STEP 7: De-assert CT reset and fifo reset
-                                 // # De-assert reset and fifo_reset for ASIC Prev CT CORE Control
+                                 // # De-assert reset and fifo_reset for GW Prev CT CORE Control
                                  // #SEND  en   id=15  d l=2   {reset, fifo_reset}
-        69: data_o = width_p ' (26'b0001___01___001111_1_0010___000000000); // 0x053E400
-                                 // # De-assert reset and fifo_reset for GW Next CT CORE Control
+        69: data_o = width_p ' (26'b0001___10___001111_1_0010___000000000); // 0x063E400
+                                 // # De-assert reset and fifo_reset for ASIC Next CT CORE Control
                                  // #SEND  en   id=18  d l=2   {reset, fifo_reset}
-        70: data_o = width_p ' (26'b0001___10___010010_1_0010___000000000); // 0x064A400
+        70: data_o = width_p ' (26'b0001___01___010010_1_0010___000000000); // 0x054A400
                                  // ### STEP 8: De-assert Router reset
                                  // # Deassert reset ASIC Routers and set cord to i
                                  // #SEND  en   id=19  d l=9   {reset, cord=1}
@@ -342,18 +342,18 @@ always_comb case(addr_i)
                                  // #SEND  en   id=23  d l=9   {reset, cord=5}
         75: data_o = width_p ' (26'b0001___01___010111_1_1001___000000101); // 0x055F205
         76: data_o = width_p ' (26'b0001___01___011110_1_1001___000001100); // 0x057B20C
-                                 // # Deassert reset GW Router Control and set cord to 0
-                                 // #SEND  en   id=19  d l=9   {reset, cord=0}
-        77: data_o = width_p ' (26'b0001___10___010011_1_1001___000000000); // 0x064F200
+                                 // # Deassert reset GW Router Control and set cord to 7
+                                 // #SEND  en   id=19  d l=9   {reset, cord=7}
+        77: data_o = width_p ' (26'b0001___10___010011_1_1001___000000111); // 0x064F207
                                  // # Deassert reset GW BlackParrot CFG and set dest cord to 3 (CLINT)
                                  // #SEND  en   id=36  d l=9   {reset, cord=9}
         78: data_o = width_p ' (26'b0001___10___100100_1_1001___000000011); // 0x0693203
-                                 // # Deassert reset ASIC BackParrot Control and set dest cord to 0 (DRAM)
-                                 // #SEND  en   id=37 d l=9   {reset, cord=0}
-        79: data_o = width_p ' (26'b0001___01___100101_1_1001___000000000); // 0x0597200
-                                 // # Deassert reset GW BlackParrot Control and set dest cord to 0 (DRAM)
-                                 // #SEND  en   id=37 d l=9   {reset, cord=0}
-        80: data_o = width_p ' (26'b0001___10___100101_1_1001___000000000); // 0x0697200
+                                 // # Deassert reset ASIC BackParrot Control and set dest cord to 7 (DRAM)
+                                 // #SEND  en   id=37 d l=9   {reset, cord=7}
+        79: data_o = width_p ' (26'b0001___01___100101_1_1001___000000111); // 0x0597207
+                                 // # Deassert reset GW BlackParrot Control and set dest cord to 7 (DRAM)
+                                 // #SEND  en   id=37 d l=9   {reset, cord=7}
+        80: data_o = width_p ' (26'b0001___10___100101_1_1001___000000111); // 0x0697207
                                  // ################################################################################
                                  // #
                                  // # Done!
