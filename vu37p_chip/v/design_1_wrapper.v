@@ -1263,7 +1263,7 @@ always_comb
   ,.block_size_in_words_p(cce_block_width_p/dword_width_p)
   ,.data_width_p         (dword_width_p)
   ,.num_cache_p          (1)
-  ,.tag_fifo_els_p       (num_core_p)
+  ,.tag_fifo_els_p       (1)
 
   ,.axi_id_width_p       (axi_id_width_p)
   ,.axi_addr_width_p     (axi_addr_width_p)
