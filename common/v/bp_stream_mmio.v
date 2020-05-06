@@ -169,7 +169,6 @@ module bp_stream_mmio
       begin
         case (io_resp.header.msg_type)
           e_cce_mem_rd
-          ,e_cce_mem_wr
           ,e_cce_mem_uc_rd:
           begin
             if (sipo_v_lo)
@@ -181,7 +180,7 @@ module bp_stream_mmio
               end
           end
           e_cce_mem_uc_wr
-          ,e_cce_mem_wb   :
+          ,e_cce_mem_wr   :
           begin
             io_resp_v_li = 1'b1;
             queue_fifo_yumi_li = 1'b1;

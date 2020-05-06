@@ -130,9 +130,9 @@ module bp_stream_nbf_loader
     freeze_addr.addr     = bp_cfg_reg_freeze_gp;
     
     case (curr_nbf.opcode)
-      2: io_cmd.header.size = e_mem_size_4;
-      3: io_cmd.header.size = e_mem_size_8;
-      default: io_cmd.header.size = e_mem_size_4;
+      2: io_cmd.header.size = e_mem_msg_size_4;
+      3: io_cmd.header.size = e_mem_msg_size_8;
+      default: io_cmd.header.size = e_mem_msg_size_4;
     endcase
   
     state_n = state_r;
@@ -147,7 +147,7 @@ module bp_stream_nbf_loader
             io_cmd_v_lo = ~credits_full_lo;
             io_cmd.data = '0;
             io_cmd.header.addr = counter_r;
-            io_cmd.header.size = e_mem_size_8;
+            io_cmd.header.size = e_mem_msg_size_8;
             if (io_cmd_yumi_i)
               begin
                 counter_n = counter_r + 32'h8;
@@ -170,7 +170,7 @@ module bp_stream_nbf_loader
                 if (clear_freeze_p == 0)
                   begin
                     io_cmd.header.addr = 32'h00000000;
-                    io_cmd.header.size = e_mem_size_8;
+                    io_cmd.header.size = e_mem_msg_size_8;
                     io_cmd.data = '0;
                     if (io_cmd_yumi_i)
                       begin
@@ -191,7 +191,7 @@ module bp_stream_nbf_loader
         io_cmd_v_lo = ~credits_full_lo;
         io_cmd.data = '0;
         io_cmd.header.addr = freeze_addr;
-        io_cmd.header.size = e_mem_size_8;
+        io_cmd.header.size = e_mem_msg_size_8;
         if (io_cmd_yumi_i)
           begin
             counter_n = counter_r + 32'd1;

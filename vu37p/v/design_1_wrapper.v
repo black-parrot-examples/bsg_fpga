@@ -16,6 +16,7 @@ module design_1_wrapper
  import bp_be_pkg::*;
  import bp_common_rv64_pkg::*;
  import bp_cce_pkg::*;
+ import bp_me_pkg::*;
  import bp_common_cfg_link_pkg::*;
  import bsg_noc_pkg::*;
  import bsg_wormhole_router_pkg::*;
@@ -492,7 +493,7 @@ always_comb
 
 bp_cce_mmio_cfg_loader
   #(.bp_params_p(bp_params_p)
-    ,.inst_width_p(`bp_cce_inst_width)
+    ,.inst_width_p($bits(bp_cce_inst_s))
     ,.inst_ram_addr_width_p(cce_instr_ram_addr_width_lp)
     ,.inst_ram_els_p(num_cce_instr_ram_els_p)
     ,.cce_ucode_filename_p(cce_ucode_filename_lp)
