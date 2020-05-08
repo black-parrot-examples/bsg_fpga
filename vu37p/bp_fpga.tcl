@@ -584,7 +584,7 @@ set files [list \
  [file normalize "${origin_dir}/black-parrot/bp_top/src/v/bp_cfg.v"] \
  [file normalize "${origin_dir}/black-parrot/bp_top/src/v/bp_nd_socket.v"] \
  [file normalize "${origin_dir}/black-parrot/bp_me/test/common/bp_cce_mmio_cfg_loader.v"] \
- [file normalize "${origin_dir}/black-parrot/bp_me/src/asm/roms/mesi/bp_cce_inst_rom_mesi.mem"] \
+ [file normalize "${origin_dir}/black-parrot/bp_me/src/asm/roms/mesi.mem"] \
  [file normalize "${origin_dir}/../common/v/bsg_m_axi_lite_to_fifo.v"] \
  [file normalize "${origin_dir}/../common/v/bp_nbf_to_cce_mem.v"] \
  [file normalize "${origin_dir}/../common/v/bp_stream_host.v"] \
@@ -1723,7 +1723,7 @@ set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
 
-set file "$origin_dir/black-parrot/bp_me/src/asm/roms/mesi/bp_cce_inst_rom_mesi.mem"
+set file "$origin_dir/black-parrot/bp_me/src/asm/roms/mesi.mem"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "Memory File" -objects $file_obj

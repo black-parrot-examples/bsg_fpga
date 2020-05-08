@@ -35,7 +35,7 @@ module design_1_wrapper
   ,localparam axi_burst_len_p    = 2
   
   ,localparam cce_instr_ram_addr_width_lp = `BSG_SAFE_CLOG2(num_cce_instr_ram_els_p)
-  ,localparam cce_ucode_filename_lp = "bp_cce_inst_rom_mesi.mem"
+  ,localparam cce_ucode_filename_lp = "mesi.mem"
   )
 
    (pci_express_x4_rxn,
@@ -503,7 +503,9 @@ bp_cce_mmio_cfg_loader
   cfg_loader
   (.clk_i(mig_clk)
    ,.reset_i(mig_reset | ~dram_sel_lo)
-   
+  
+   ,.lce_id_i('0)
+ 
    ,.io_cmd_o(cfg_cmd_lo)
    ,.io_cmd_v_o(cfg_cmd_v_lo)
    ,.io_cmd_yumi_i(cfg_cmd_ready_li & cfg_cmd_v_lo)
