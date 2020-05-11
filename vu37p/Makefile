@@ -11,9 +11,9 @@ else ifeq ($(GIT_CLONE_STYLE),https)
   BITBUCKET :=https://bitbucket.com/
 endif
 
-black_parrot_dir := $(THIS_DIR)/black-parrot
-black_parrot_url := $(GITHUB)black-parrot/black-parrot
-black_parrot_commit := c7f47ef
+blackparrot_dir := $(THIS_DIR)/black-parrot
+blackparrot_url := $(GITHUB)black-parrot/black-parrot
+blackparrot_commit := 0ca9519
 
 
 vivado_bin := $(XILINX_VIVADO)/bin/vivado
@@ -31,16 +31,16 @@ update_tcl_dir := $(script_dir)/update_tcl.tcl
 
 all: libs
 
-libs: $(black_parrot_dir)
+libs: $(blackparrot_dir)
 
-$(black_parrot_dir):
-	git clone $(black_parrot_url) $(black_parrot_dir)
-	cd $(black_parrot_dir); git checkout $(black_parrot_commit)
+$(blackparrot_dir):
+	git clone $(blackparrot_url) $(blackparrot_dir)
+	cd $(blackparrot_dir); git checkout $(blackparrot_commit)
 
 build: $(project_dir)
 
 $(project_dir): libs $(build_tcl_dir)
-	cd $(black_parrot_dir); make ucode
+	cd $(blackparrot_dir); make ucode
 	$(vivado_bin) -mode batch -source $(build_tcl_dir)
 
 open:
@@ -56,7 +56,7 @@ update_tcl:
 	$(vivado_bin) -mode batch -source $(update_tcl_dir)
 
 clean_libs: are_you_sure
-	rm -rf $(black_parrot_dir)
+	rm -rf $(blackparrot_dir)
 
 clean_build: are_you_sure
 	rm -rf $(project_dir)
