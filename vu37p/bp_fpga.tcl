@@ -159,7 +159,6 @@
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/black-parrot/bp_top/src/v/bp_tile.v"
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/black-parrot/bp_top/src/v/bp_tile_node.v"
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/black-parrot/bp_common/src/v/bp_tlb.v"
-#    "/home/petrisko/scratch/bsg_fpga/vu37p/black-parrot/bp_common/src/v/bp_tlb_replacement.v"
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/black-parrot/external/basejump_stl/bsg_misc/bsg_arb_fixed.v"
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/black-parrot/external/basejump_stl/bsg_misc/bsg_array_concentrate_static.v"
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/black-parrot/external/basejump_stl/bsg_misc/bsg_array_reverse.v"
@@ -507,7 +506,6 @@ set files [list \
  [file normalize "${origin_dir}/black-parrot/bp_top/src/v/bp_tile.v"] \
  [file normalize "${origin_dir}/black-parrot/bp_top/src/v/bp_tile_node.v"] \
  [file normalize "${origin_dir}/black-parrot/bp_common/src/v/bp_tlb.v"] \
- [file normalize "${origin_dir}/black-parrot/bp_common/src/v/bp_tlb_replacement.v"] \
  [file normalize "${origin_dir}/black-parrot/external/basejump_stl/bsg_misc/bsg_arb_fixed.v"] \
  [file normalize "${origin_dir}/black-parrot/external/basejump_stl/bsg_misc/bsg_array_concentrate_static.v"] \
  [file normalize "${origin_dir}/black-parrot/external/basejump_stl/bsg_misc/bsg_array_reverse.v"] \
@@ -525,6 +523,9 @@ set files [list \
  [file normalize "${origin_dir}/black-parrot/external/basejump_stl/bsg_cache/bsg_cache_to_axi_rx.v"] \
  [file normalize "${origin_dir}/black-parrot/external/basejump_stl/bsg_cache/bsg_cache_to_axi_tx.v"] \
  [file normalize "${origin_dir}/black-parrot/external/basejump_stl/bsg_mem/bsg_cam_1r1w.v"] \
+ [file normalize "${origin_dir}/black-parrot/external/basejump_stl/bsg_mem/bsg_cam_1r1w_replacement.v"] \
+ [file normalize "${origin_dir}/black-parrot/external/basejump_stl/bsg_mem/bsg_cam_1r1w_sync.v"] \
+ [file normalize "${origin_dir}/black-parrot/external/basejump_stl/bsg_mem/bsg_cam_1r1w_tag_array.v"] \
  [file normalize "${origin_dir}/black-parrot/external/basejump_stl/bsg_misc/bsg_circular_ptr.v"] \
  [file normalize "${origin_dir}/black-parrot/external/basejump_stl/bsg_misc/bsg_clkgate_optional.v"] \
  [file normalize "${origin_dir}/black-parrot/external/basejump_stl/bsg_misc/bsg_concentrate_static.v"] \
@@ -559,6 +560,7 @@ set files [list \
  [file normalize "${origin_dir}/black-parrot/external/basejump_stl/bsg_misc/bsg_lru_pseudo_tree_encode.v"] \
  [file normalize "${origin_dir}/../common/v/bsg_m_axi_lite_to_fifo.v"] \
  [file normalize "${origin_dir}/black-parrot/external/basejump_stl/bsg_mem/bsg_mem_1r1w.v"] \
+ [file normalize "${origin_dir}/black-parrot/external/basejump_stl/bsg_mem/bsg_mem_1r1w_one_hot.v"] \
  [file normalize "${origin_dir}/black-parrot/external/basejump_stl/bsg_mem/bsg_mem_1r1w_sync.v"] \
  [file normalize "${origin_dir}/black-parrot/external/basejump_stl/bsg_mem/bsg_mem_1r1w_sync_synth.v"] \
  [file normalize "${origin_dir}/black-parrot/external/basejump_stl/bsg_mem/bsg_mem_1r1w_synth.v"] \
@@ -571,6 +573,7 @@ set files [list \
  [file normalize "${origin_dir}/black-parrot/external/basejump_stl/bsg_mem/bsg_mem_2r1w_sync_synth.v"] \
  [file normalize "${origin_dir}/black-parrot/external/basejump_stl/bsg_noc/bsg_mesh_stitch.v"] \
  [file normalize "${origin_dir}/black-parrot/external/basejump_stl/bsg_misc/bsg_mux.v"] \
+ [file normalize "${origin_dir}/black-parrot/external/basejump_stl/bsg_misc/bsg_mux_bitwise.v"] \
  [file normalize "${origin_dir}/black-parrot/external/basejump_stl/bsg_misc/bsg_mux_butterfly.v"] \
  [file normalize "${origin_dir}/black-parrot/external/basejump_stl/bsg_misc/bsg_mux_one_hot.v"] \
  [file normalize "${origin_dir}/black-parrot/external/basejump_stl/bsg_misc/bsg_mux_segmented.v"] \
@@ -1262,11 +1265,6 @@ set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
 
-set file "$origin_dir/black-parrot/bp_common/src/v/bp_tlb_replacement.v"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
-set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
-
 set file "$origin_dir/black-parrot/external/basejump_stl/bsg_misc/bsg_arb_fixed.v"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
@@ -1348,6 +1346,21 @@ set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
 
 set file "$origin_dir/black-parrot/external/basejump_stl/bsg_mem/bsg_cam_1r1w.v"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
+
+set file "$origin_dir/black-parrot/external/basejump_stl/bsg_mem/bsg_cam_1r1w_replacement.v"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
+
+set file "$origin_dir/black-parrot/external/basejump_stl/bsg_mem/bsg_cam_1r1w_sync.v"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
+
+set file "$origin_dir/black-parrot/external/basejump_stl/bsg_mem/bsg_cam_1r1w_tag_array.v"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
@@ -1522,6 +1535,11 @@ set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
 
+set file "$origin_dir/black-parrot/external/basejump_stl/bsg_mem/bsg_mem_1r1w_one_hot.v"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
+
 set file "$origin_dir/black-parrot/external/basejump_stl/bsg_mem/bsg_mem_1r1w_sync.v"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
@@ -1578,6 +1596,11 @@ set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
 
 set file "$origin_dir/black-parrot/external/basejump_stl/bsg_misc/bsg_mux.v"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
+
+set file "$origin_dir/black-parrot/external/basejump_stl/bsg_misc/bsg_mux_bitwise.v"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
