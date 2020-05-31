@@ -7,6 +7,10 @@ set_property INTERNAL_VREF 0.840 [get_iobanks 67]
 set_property PACKAGE_PIN J16      [get_ports {reset}]
 set_property IOSTANDARD  LVCMOS33 [get_ports {reset}]
 
+set_property PACKAGE_PIN C15      [get_ports {reset_gpio}]
+set_property IOSTANDARD  LVCMOS33 [get_ports {reset_gpio}]
+set_property PULLTYPE    PULLDOWN [get_ports {reset_gpio}]
+
 # PCIe pin assignment
 set_property PACKAGE_PIN P5 [get_ports {pcie_refclk_clk_n}]
 set_property PACKAGE_PIN P6 [get_ports {pcie_refclk_clk_p}]

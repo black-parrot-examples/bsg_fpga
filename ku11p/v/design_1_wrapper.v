@@ -58,6 +58,7 @@ module design_1_wrapper
     pcie_refclk_clk_n,
     pcie_refclk_clk_p,
     reset,
+    reset_gpio,
     sysclk_300_clk_n,
     sysclk_300_clk_p,
     led);
@@ -85,6 +86,7 @@ module design_1_wrapper
   input pcie_refclk_clk_n;
   input pcie_refclk_clk_p;
   input reset;
+  input reset_gpio;
   input sysclk_300_clk_n;
   input sysclk_300_clk_p;
   output [3:0] led;
@@ -145,6 +147,7 @@ module design_1_wrapper
 
   wire [0:0]pcie_rstn;
   wire reset;
+  wire reset_gpio;
   wire [3:0] led;
 
   wire [29:0]s_axi_araddr;
@@ -779,7 +782,7 @@ always_comb
         .pcie_refclk_clk_n(pcie_refclk_clk_n),
         .pcie_refclk_clk_p(pcie_refclk_clk_p),
         .pcie_rstn(pcie_rstn),
-        .reset(reset),
+        .reset(reset | reset_gpio),
         .s_axi_araddr(s_axi_araddr),
         .s_axi_arburst(s_axi_arburst),
         .s_axi_arcache(s_axi_arcache),
