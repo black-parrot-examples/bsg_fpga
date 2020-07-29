@@ -9,9 +9,9 @@ module bp_stream_host
   import bp_be_dcache_pkg::*;
   import bp_me_pkg::*;
   
- #(parameter bp_params_e bp_params_p = e_bp_inv_cfg
+ #(parameter bp_params_e bp_params_p = e_bp_default_cfg
   `declare_bp_proc_params(bp_params_p)
-  `declare_bp_me_if_widths(paddr_width_p, cce_block_width_p, lce_id_width_p, lce_assoc_p)
+  `declare_bp_mem_if_widths(paddr_width_p, cce_block_width_p, lce_id_width_p, lce_assoc_p, cce_mem)
   
   ,parameter stream_addr_width_p = 32
   ,parameter stream_data_width_p = 32
@@ -50,7 +50,7 @@ module bp_stream_host
   ,input                                        stream_ready_i
   );
   
-  `declare_bp_me_if(paddr_width_p, cce_block_width_p, lce_id_width_p, lce_assoc_p);
+  `declare_bp_mem_if(paddr_width_p, cce_block_width_p, lce_id_width_p, lce_assoc_p, cce_mem);
   
   // AXI-Lite address map
   //

@@ -22,9 +22,9 @@ module design_1_wrapper
  import bsg_wormhole_router_pkg::*;
  import bsg_cache_pkg::*;
 
- #(parameter bp_params_e bp_params_p = e_bp_single_core_cfg
+ #(parameter bp_params_e bp_params_p = e_bp_multicore_1_cfg
    `declare_bp_proc_params(bp_params_p)
-   `declare_bp_me_if_widths(paddr_width_p, cce_block_width_p, lce_id_width_p, lce_assoc_p)
+   `declare_bp_mem_if_widths(paddr_width_p, cce_block_width_p, lce_id_width_p, lce_assoc_p, cce_mem)
    
   ,parameter load_nbf_p = 1
    
@@ -233,7 +233,7 @@ module design_1_wrapper
   
 `declare_bsg_ready_and_link_sif_s(io_noc_flit_width_p, bp_io_noc_ral_link_s);
 `declare_bsg_ready_and_link_sif_s(mem_noc_flit_width_p, bp_mem_noc_ral_link_s);
-`declare_bp_me_if(paddr_width_p, cce_block_width_p, lce_id_width_p, lce_assoc_p)
+`declare_bp_mem_if(paddr_width_p, cce_block_width_p, lce_id_width_p, lce_assoc_p, cce_mem)
 
 bp_io_noc_ral_link_s [E:P] cmd_link_li, cmd_link_lo;
 bp_io_noc_ral_link_s [E:P] resp_link_li, resp_link_lo;
@@ -247,16 +247,6 @@ bp_cce_mem_msg_s nbf_dram_cmd_li;
 logic            nbf_dram_cmd_v_li, nbf_dram_cmd_yumi_lo;
 bp_cce_mem_msg_s nbf_dram_resp_lo;
 logic            nbf_dram_resp_v_lo, nbf_dram_resp_ready_li;
-
-bp_cce_mem_msg_s a_dram_cmd_li;
-logic            a_dram_cmd_v_li, a_dram_cmd_yumi_lo;
-bp_cce_mem_msg_s a_dram_resp_lo;
-logic            a_dram_resp_v_lo, a_dram_resp_ready_li;
-
-bp_cce_mem_msg_s b_dram_cmd_li;
-logic            b_dram_cmd_v_li, b_dram_cmd_yumi_lo;
-bp_cce_mem_msg_s b_dram_resp_lo;
-logic            b_dram_resp_v_lo, b_dram_resp_ready_li;
 
 bp_io_noc_ral_link_s proc_cmd_link_li, proc_cmd_link_lo;
 bp_io_noc_ral_link_s proc_resp_link_li, proc_resp_link_lo;
@@ -273,11 +263,6 @@ logic                  load_cmd_v_lo, load_cmd_ready_li;
 bp_cce_mem_msg_s       load_resp_li;
 logic                  load_resp_v_li, load_resp_yumi_lo;
 
-bp_cce_mem_msg_s       cfg_cmd_lo;
-logic                  cfg_cmd_v_lo, cfg_cmd_ready_li;
-bp_cce_mem_msg_s       cfg_resp_li;
-logic                  cfg_resp_v_li, cfg_resp_ready_lo;
-
 bp_cce_mem_msg_s       nbf_cmd_lo;
 logic                  nbf_cmd_v_lo, nbf_cmd_ready_li;
 bp_cce_mem_msg_s       nbf_resp_li;
@@ -292,7 +277,7 @@ assign stub_cmd_link_li  = '0;
 assign stub_resp_link_li = '0;
 
 // Chip
-bp_processor
+bp_multicore
  #(.bp_params_p(bp_params_p))
  proc
   (.core_clk_i(mig_clk)
@@ -334,13 +319,13 @@ bp_me_cce_to_mem_link_bidir
   (.clk_i(mig_clk)
    ,.reset_i(mig_reset)
 
-   ,.mem_cmd_i(load_cmd_lo)
-   ,.mem_cmd_v_i(load_cmd_v_lo)
-   ,.mem_cmd_ready_o(load_cmd_ready_li)
+   ,.mem_cmd_i(nbf_cmd_lo)
+   ,.mem_cmd_v_i(nbf_cmd_v_lo)
+   ,.mem_cmd_ready_o(nbf_cmd_ready_li)
 
-   ,.mem_resp_o(load_resp_li)
-   ,.mem_resp_v_o(load_resp_v_li)
-   ,.mem_resp_yumi_i(load_resp_yumi_lo)
+   ,.mem_resp_o(nbf_resp_li)
+   ,.mem_resp_v_o(nbf_resp_v_li)
+   ,.mem_resp_yumi_i(nbf_resp_ready_lo & nbf_resp_v_li)
 
    ,.my_cord_i(io_noc_cord_width_p'(dram_did_li))
    ,.my_cid_i('0)
@@ -373,186 +358,21 @@ bp_me_cce_to_mem_link_client
   (.clk_i(mig_clk)
    ,.reset_i(mig_reset)
 
-   ,.mem_cmd_o(b_dram_cmd_li)
-   ,.mem_cmd_v_o(b_dram_cmd_v_li)
-   ,.mem_cmd_yumi_i(b_dram_cmd_yumi_lo)
+   ,.mem_cmd_o(dram_cmd_li)
+   ,.mem_cmd_v_o(dram_cmd_v_li)
+   ,.mem_cmd_yumi_i(dram_cmd_yumi_lo)
 
-   ,.mem_resp_i(b_dram_resp_lo)
-   ,.mem_resp_v_i(b_dram_resp_v_lo)
-   ,.mem_resp_ready_o(b_dram_resp_ready_li)
+   ,.mem_resp_i(dram_resp_lo)
+   ,.mem_resp_v_i(dram_resp_v_lo)
+   ,.mem_resp_ready_o(dram_resp_ready_li)
 
    ,.cmd_link_i(dram_cmd_link_lo)
    ,.resp_link_o(dram_resp_link_li)
    );
 
 
-  logic nbf_done_lo, cfg_done_lo, dram_sel_lo;
+  logic nbf_done_lo;
 
-  if (load_nbf_p == 0)
-  begin
-    
-    assign nbf_cmd_lo = '0;
-    assign nbf_cmd_v_lo = '0;
-    assign nbf_resp_ready_lo = '0;
-    
-    logic [7:0] counter_r, counter_n;
-    logic nbf_done_r;
-    always_ff @(posedge mig_clk)
-      begin
-        if (mig_reset)
-          begin
-            counter_r <= 1;
-            nbf_done_r <= 0;
-          end
-        else if (nbf_done_lo)
-          begin
-            if (counter_r == 0)
-              begin
-                nbf_done_r <= 1;
-              end
-            else
-              begin
-                counter_r <= counter_r + 1;
-              end
-          end
-      end
-    assign dram_sel_lo = nbf_done_r;
-       
-    bp_nbf_to_cce_mem
-   #(.bp_params_p(bp_params_p)
-    ) nbf_adapter
-    (.clk_i(mig_clk)
-    ,.reset_i(mig_reset)
-
-    ,.io_cmd_i(nbf_dram_cmd_li)
-    ,.io_cmd_v_i(nbf_dram_cmd_v_li)
-    ,.io_cmd_yumi_o(nbf_dram_cmd_yumi_lo)
-
-    ,.io_resp_o(nbf_dram_resp_lo)
-    ,.io_resp_v_o(nbf_dram_resp_v_lo)
-    ,.io_resp_ready_i(nbf_dram_resp_ready_li)
-
-    ,.mem_cmd_o(a_dram_cmd_li)
-    ,.mem_cmd_v_o(a_dram_cmd_v_li)
-    ,.mem_cmd_yumi_i(a_dram_cmd_yumi_lo)
-
-    ,.mem_resp_i(a_dram_resp_lo)
-    ,.mem_resp_v_i(a_dram_resp_v_lo)
-    ,.mem_resp_ready_o(a_dram_resp_ready_li)
-    );
-  
-  end
-  else
-  begin
-    
-    assign nbf_cmd_lo = nbf_dram_cmd_li;
-    assign nbf_cmd_v_lo = nbf_dram_cmd_v_li;
-    assign nbf_dram_cmd_yumi_lo = nbf_cmd_v_lo & nbf_cmd_ready_li;
-    
-    assign nbf_dram_resp_lo = nbf_resp_li;
-    assign nbf_dram_resp_v_lo = nbf_resp_v_li;
-    assign nbf_resp_ready_lo = nbf_dram_resp_ready_li;
-    
-    assign dram_sel_lo = 1'b1;
-    
-  end
-    
-
-always_comb
-  begin
-    if (dram_sel_lo)
-      begin
-        dram_cmd_li = b_dram_cmd_li;
-        dram_cmd_v_li = b_dram_cmd_v_li;
-        b_dram_cmd_yumi_lo = dram_cmd_yumi_lo;
-        
-        b_dram_resp_lo = dram_resp_lo;
-        b_dram_resp_v_lo = dram_resp_v_lo;
-        dram_resp_ready_li = b_dram_resp_ready_li;
-        
-        a_dram_cmd_yumi_lo = a_dram_cmd_v_li;
-        a_dram_resp_lo = '0;
-        a_dram_resp_v_lo = 1'b0;
-      end
-    else
-      begin
-        dram_cmd_li = a_dram_cmd_li;
-        dram_cmd_v_li = a_dram_cmd_v_li;
-        a_dram_cmd_yumi_lo = dram_cmd_yumi_lo;
-        
-        a_dram_resp_lo = dram_resp_lo;
-        a_dram_resp_v_lo = dram_resp_v_lo;
-        dram_resp_ready_li = a_dram_resp_ready_li;
-        
-        b_dram_cmd_yumi_lo = b_dram_cmd_v_li;
-        b_dram_resp_lo = '0;
-        b_dram_resp_v_lo = 1'b0;
-      end
-  end
-
-
-bp_cce_mmio_cfg_loader
-  #(.bp_params_p(bp_params_p)
-    ,.inst_width_p($bits(bp_cce_inst_s))
-    ,.inst_ram_addr_width_p(cce_instr_ram_addr_width_lp)
-    ,.inst_ram_els_p(num_cce_instr_ram_els_p)
-    ,.cce_ucode_filename_p(cce_ucode_filename_lp)
-    ,.skip_ram_init_p(0)
-    ,.clear_freeze_p((load_nbf_p == 0))
-    )
-  cfg_loader
-  (.clk_i(mig_clk)
-   ,.reset_i(mig_reset | ~dram_sel_lo)
-  
-   ,.lce_id_i('0)
- 
-   ,.io_cmd_o(cfg_cmd_lo)
-   ,.io_cmd_v_o(cfg_cmd_v_lo)
-   ,.io_cmd_yumi_i(cfg_cmd_ready_li & cfg_cmd_v_lo)
-   
-   ,.io_resp_i(cfg_resp_li)
-   ,.io_resp_v_i(cfg_resp_v_li)
-   ,.io_resp_ready_o(cfg_resp_ready_lo)
-   
-   ,.done_o(cfg_done_lo)
-  );
-
-// CFG and NBF are mutex, so we can just use fixed arbitration here
-always_comb
-  if (~cfg_done_lo)
-    begin
-      load_cmd_lo = cfg_cmd_lo;
-      load_cmd_v_lo = load_cmd_ready_li & cfg_cmd_v_lo;
-
-      nbf_cmd_ready_li = 1'b0;
-      cfg_cmd_ready_li = load_cmd_ready_li;
-
-      nbf_resp_li = '0;
-      nbf_resp_v_li = 1'b0;
-
-      cfg_resp_li = load_resp_li;
-      cfg_resp_v_li = cfg_resp_ready_lo & load_resp_v_li;
-
-      load_resp_yumi_lo = cfg_resp_v_li;
-    end
-  else
-    begin
-      load_cmd_lo = nbf_cmd_lo;
-      load_cmd_v_lo = load_cmd_ready_li & nbf_cmd_v_lo;
-
-      nbf_cmd_ready_li = load_cmd_ready_li;
-      cfg_cmd_ready_li = 1'b0;
-
-      nbf_resp_li = load_resp_li;
-      nbf_resp_v_li = nbf_resp_ready_lo & load_resp_v_li;
-
-      cfg_resp_li = '0;
-      cfg_resp_v_li = 1'b0;
-
-      load_resp_yumi_lo = nbf_resp_v_li;
-    end
-
-  
   // pcie stream host (NBF and MMIO)
   assign led[3] = nbf_done_lo;
   
@@ -560,10 +380,9 @@ always_comb
  #(.bp_params_p(bp_params_p)
   ,.stream_addr_width_p(32)
   ,.stream_data_width_p(32)
-  ,.clear_freeze_p((load_nbf_p != 0))
   ) host        
   (.clk_i          (mig_clk)
-  ,.reset_i        (mig_reset | (~cfg_done_lo & (load_nbf_p != 0)))
+  ,.reset_i        (mig_reset)
   ,.prog_done_o    (nbf_done_lo)
   
   ,.io_cmd_i       (host_cmd_li)
@@ -574,13 +393,13 @@ always_comb
   ,.io_resp_v_o    (host_resp_v_lo)
   ,.io_resp_ready_i(host_resp_ready_li)
 
-  ,.io_cmd_o       (nbf_dram_cmd_li)
-  ,.io_cmd_v_o     (nbf_dram_cmd_v_li)
-  ,.io_cmd_yumi_i  (nbf_dram_cmd_yumi_lo)
+  ,.io_cmd_o       (nbf_cmd_lo)
+  ,.io_cmd_v_o     (nbf_cmd_v_lo)
+  ,.io_cmd_yumi_i  (nbf_cmd_ready_li & nbf_cmd_v_lo)
 
-  ,.io_resp_i      (nbf_dram_resp_lo)
-  ,.io_resp_v_i    (nbf_dram_resp_v_lo)
-  ,.io_resp_ready_o(nbf_dram_resp_ready_li)
+  ,.io_resp_i      (nbf_resp_li)
+  ,.io_resp_v_i    (nbf_resp_v_li)
+  ,.io_resp_ready_o(nbf_resp_ready_lo)
 
   ,.stream_v_i     (m_axi_lite_v_lo)
   ,.stream_addr_i  (m_axi_lite_addr_lo)
