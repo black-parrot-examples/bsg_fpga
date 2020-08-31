@@ -320,7 +320,7 @@ bp_me_cce_to_mem_link_bidir
    ,.reset_i(mig_reset)
 
    ,.mem_cmd_i(nbf_cmd_lo)
-   ,.mem_cmd_v_i(nbf_cmd_v_lo)
+   ,.mem_cmd_v_i(nbf_cmd_ready_li & nbf_cmd_v_lo)
    ,.mem_cmd_ready_o(nbf_cmd_ready_li)
 
    ,.mem_resp_o(nbf_resp_li)
@@ -363,7 +363,7 @@ bp_me_cce_to_mem_link_client
    ,.mem_cmd_yumi_i(dram_cmd_yumi_lo)
 
    ,.mem_resp_i(dram_resp_lo)
-   ,.mem_resp_v_i(dram_resp_v_lo)
+   ,.mem_resp_v_i(dram_resp_ready_li & dram_resp_v_lo)
    ,.mem_resp_ready_o(dram_resp_ready_li)
 
    ,.cmd_link_i(dram_cmd_link_lo)
