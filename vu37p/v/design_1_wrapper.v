@@ -271,10 +271,7 @@ logic                  nbf_resp_v_li, nbf_resp_ready_lo;
 wire [io_noc_did_width_p-1:0] dram_did_li = '1;
 wire [io_noc_did_width_p-1:0] proc_did_li = 1;
 
-bp_io_noc_ral_link_s stub_cmd_link_li, stub_resp_link_li;
-bp_io_noc_ral_link_s stub_cmd_link_lo, stub_resp_link_lo;
-assign stub_cmd_link_li  = '0;
-assign stub_resp_link_li = '0;
+bp_io_noc_ral_link_s stub_cmd_link, stub_resp_link;
 
 // Chip
 bp_multicore
@@ -295,11 +292,11 @@ bp_multicore
    ,.my_did_i(proc_did_li)
    ,.host_did_i(dram_did_li)
 
-   ,.io_cmd_link_i({proc_cmd_link_li, stub_cmd_link_li})
-   ,.io_cmd_link_o({proc_cmd_link_lo, stub_cmd_link_lo})
+   ,.io_cmd_link_i({proc_cmd_link_li, stub_cmd_link})
+   ,.io_cmd_link_o({proc_cmd_link_lo, stub_cmd_link})
 
-   ,.io_resp_link_i({proc_resp_link_li, stub_resp_link_li})
-   ,.io_resp_link_o({proc_resp_link_lo, stub_resp_link_lo})
+   ,.io_resp_link_i({proc_resp_link_li, stub_resp_link})
+   ,.io_resp_link_o({proc_resp_link_lo, stub_resp_link})
 
    ,.dram_cmd_link_o(dram_cmd_link_lo)
    ,.dram_resp_link_i(dram_resp_link_li)
