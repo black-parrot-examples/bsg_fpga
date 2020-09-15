@@ -10,9 +10,9 @@ module bp_nbf_to_cce_mem
   import bp_cce_pkg::*;
   import bp_me_pkg::*;
   
- #(parameter bp_params_e bp_params_p = e_bp_inv_cfg
+ #(parameter bp_params_e bp_params_p = e_bp_default_cfg
   `declare_bp_proc_params(bp_params_p)
-  `declare_bp_me_if_widths(paddr_width_p, cce_block_width_p, lce_id_width_p, lce_assoc_p)
+  `declare_bp_mem_if_widths(paddr_width_p, cce_block_width_p, lce_id_width_p, lce_assoc_p, cce_mem)
   
   ,localparam byte_width_lp = 8
   ,localparam block_offset_lp = `BSG_SAFE_CLOG2(cce_block_width_p/byte_width_lp)
@@ -43,7 +43,7 @@ module bp_nbf_to_cce_mem
   assign mem_resp_ready_o = 1'b1;
   
   // bp_cce packet
-  `declare_bp_me_if(paddr_width_p, cce_block_width_p, lce_id_width_p, lce_assoc_p);
+  `declare_bp_mem_if(paddr_width_p, cce_block_width_p, lce_id_width_p, lce_assoc_p, cce_mem);
   
   bp_cce_mem_msg_s io_cmd, io_resp, mem_cmd;
   logic io_cmd_yumi_lo, mem_cmd_v_lo;
@@ -111,7 +111,7 @@ module bp_nbf_to_cce_mem
     mem_cmd.data            = words_r;
     mem_cmd.header.payload  = '0;
     mem_cmd.header.addr     = {addr_r[paddr_width_p-1:block_offset_lp], (block_offset_lp)'(0)};
-    mem_cmd.header.msg_type = e_cce_mem_wr;
+    mem_cmd.header.msg_type = e_mem_msg_wr;
     mem_cmd.header.size     = e_mem_msg_size_64;
     
     if (state_r == 0)

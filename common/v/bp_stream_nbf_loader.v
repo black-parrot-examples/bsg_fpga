@@ -13,9 +13,9 @@ module bp_stream_nbf_loader
   import bp_be_dcache_pkg::*;
   import bp_me_pkg::*;
   
- #(parameter bp_params_e bp_params_p = e_bp_inv_cfg
+ #(parameter bp_params_e bp_params_p = e_bp_default_cfg
   `declare_bp_proc_params(bp_params_p)
-  `declare_bp_me_if_widths(paddr_width_p, cce_block_width_p, lce_id_width_p, lce_assoc_p)
+  `declare_bp_mem_if_widths(paddr_width_p, cce_block_width_p, lce_id_width_p, lce_assoc_p, cce_mem)
   
   ,parameter stream_data_width_p = 32
   ,parameter clear_freeze_p = 0
@@ -73,7 +73,7 @@ module bp_stream_nbf_loader
   } bp_nbf_s;
 
   // bp_cce packet
-  `declare_bp_me_if(paddr_width_p, cce_block_width_p, lce_id_width_p, lce_assoc_p);
+  `declare_bp_mem_if(paddr_width_p, cce_block_width_p, lce_id_width_p, lce_assoc_p, cce_mem);
   bp_cce_mem_msg_s io_cmd, io_resp;
   logic io_cmd_v_lo;
   
@@ -122,7 +122,7 @@ module bp_stream_nbf_loader
     io_cmd.data = curr_nbf.data;
     io_cmd.header.payload = '0;
     io_cmd.header.addr = curr_nbf.addr;
-    io_cmd.header.msg_type = e_cce_mem_uc_wr;
+    io_cmd.header.msg_type = e_mem_msg_uc_wr;
     
     freeze_addr.nonlocal = '0;
     freeze_addr.cce      = counter_r;
