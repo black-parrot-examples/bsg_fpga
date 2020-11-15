@@ -15,7 +15,7 @@ module bp_stream_mmio
 
  #(parameter bp_params_e bp_params_p = e_bp_default_cfg
   `declare_bp_proc_params(bp_params_p)
-  `declare_bp_mem_if_widths(paddr_width_p, cce_block_width_p, lce_id_width_p, lce_assoc_p, cce_mem)
+  `declare_bp_bedrock_mem_if_widths(paddr_width_p, cce_block_width_p, lce_id_width_p, lce_assoc_p, cce)
   
   ,parameter stream_data_width_p = 32
   )
@@ -40,11 +40,11 @@ module bp_stream_mmio
   ,input                                    stream_yumi_i
   );
 
-  `declare_bp_mem_if(paddr_width_p, cce_block_width_p, lce_id_width_p, lce_assoc_p, cce_mem);
+  `declare_bp_bedrock_mem_if(paddr_width_p, cce_block_width_p, lce_id_width_p, lce_assoc_p, cce);
   
   // Temporarily support cce_data_size less than stream_data_width_p only
   // Temporarily support response of 64-bits data only
-  bp_cce_mem_msg_s io_cmd, io_resp;
+  bp_bedrock_cce_mem_msg_s io_cmd, io_resp;
   assign io_cmd = io_cmd_i;
   
   // streaming out fifo
@@ -168,8 +168,8 @@ module bp_stream_mmio
     if (queue_fifo_v_lo & io_resp_ready_lo)
       begin
         case (io_resp.header.msg_type)
-          e_mem_msg_rd
-          ,e_mem_msg_uc_rd:
+          e_bedrock_mem_rd
+          ,e_bedrock_mem_uc_rd:
           begin
             if (sipo_v_lo)
               begin
@@ -179,8 +179,8 @@ module bp_stream_mmio
                 sipo_yumi_li = 1'b1;
               end
           end
-          e_mem_msg_uc_wr
-          ,e_mem_msg_wr   :
+          e_bedrock_mem_uc_wr
+          ,e_bedrock_mem_wr   :
           begin
             io_resp_v_li = 1'b1;
             queue_fifo_yumi_li = 1'b1;

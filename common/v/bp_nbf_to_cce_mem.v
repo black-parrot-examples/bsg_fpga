@@ -12,7 +12,7 @@ module bp_nbf_to_cce_mem
   
  #(parameter bp_params_e bp_params_p = e_bp_default_cfg
   `declare_bp_proc_params(bp_params_p)
-  `declare_bp_mem_if_widths(paddr_width_p, cce_block_width_p, lce_id_width_p, lce_assoc_p, cce_mem)
+  `declare_bp_bedrock_mem_if_widths(paddr_width_p, cce_block_width_p, lce_id_width_p, lce_assoc_p, cce)
   
   ,localparam byte_width_lp = 8
   ,localparam block_offset_lp = `BSG_SAFE_CLOG2(cce_block_width_p/byte_width_lp)
@@ -43,7 +43,7 @@ module bp_nbf_to_cce_mem
   assign mem_resp_ready_o = 1'b1;
   
   // bp_cce packet
-  `declare_bp_mem_if(paddr_width_p, cce_block_width_p, lce_id_width_p, lce_assoc_p, cce_mem);
+  `declare_bp_bedrock_mem_if(paddr_width_p, cce_block_width_p, lce_id_width_p, lce_assoc_p, cce);
   
   bp_cce_mem_msg_s io_cmd, io_resp, mem_cmd;
   logic io_cmd_yumi_lo, mem_cmd_v_lo;
@@ -111,8 +111,8 @@ module bp_nbf_to_cce_mem
     mem_cmd.data            = words_r;
     mem_cmd.header.payload  = '0;
     mem_cmd.header.addr     = {addr_r[paddr_width_p-1:block_offset_lp], (block_offset_lp)'(0)};
-    mem_cmd.header.msg_type = e_mem_msg_wr;
-    mem_cmd.header.size     = e_mem_msg_size_64;
+    mem_cmd.header.msg_type = e_bedrock_mem_wr;
+    mem_cmd.header.size     = e_bedrock_msg_size_64;
     
     if (state_r == 0)
       begin
@@ -134,11 +134,11 @@ module bp_nbf_to_cce_mem
             else if (io_resp_fifo_ready_lo)
               begin
                 case (io_cmd.header.size)
-                  e_mem_msg_size_4 : words_n[byte_width_lp*io_cmd_byte_idx+:byte_width_lp*4 ] = io_cmd.data[0+:byte_width_lp*4 ];
-                  e_mem_msg_size_8 : words_n[byte_width_lp*io_cmd_byte_idx+:byte_width_lp*8 ] = io_cmd.data[0+:byte_width_lp*8 ];
-                  e_mem_msg_size_16: words_n[byte_width_lp*io_cmd_byte_idx+:byte_width_lp*16] = io_cmd.data[0+:byte_width_lp*16];
-                  e_mem_msg_size_32: words_n[byte_width_lp*io_cmd_byte_idx+:byte_width_lp*32] = io_cmd.data[0+:byte_width_lp*32];
-                  e_mem_msg_size_64: words_n[byte_width_lp*io_cmd_byte_idx+:byte_width_lp*64] = io_cmd.data[0+:byte_width_lp*64];
+                  e_bedrock_msg_size_4 : words_n[byte_width_lp*io_cmd_byte_idx+:byte_width_lp*4 ] = io_cmd.data[0+:byte_width_lp*4 ];
+                  e_bedrock_msg_size_8 : words_n[byte_width_lp*io_cmd_byte_idx+:byte_width_lp*8 ] = io_cmd.data[0+:byte_width_lp*8 ];
+                  e_bedrock_msg_size_16: words_n[byte_width_lp*io_cmd_byte_idx+:byte_width_lp*16] = io_cmd.data[0+:byte_width_lp*16];
+                  e_bedrock_msg_size_32: words_n[byte_width_lp*io_cmd_byte_idx+:byte_width_lp*32] = io_cmd.data[0+:byte_width_lp*32];
+                  e_bedrock_msg_size_64: words_n[byte_width_lp*io_cmd_byte_idx+:byte_width_lp*64] = io_cmd.data[0+:byte_width_lp*64];
                   default:;
                 endcase
                 io_cmd_yumi_lo = 1'b1;
