@@ -13,7 +13,7 @@ endif
 
 blackparrot_dir := $(THIS_DIR)/black-parrot
 blackparrot_url := $(GITHUB)black-parrot/black-parrot
-blackparrot_commit := f377349
+blackparrot_commit := 5b8a807
 
 
 vivado_bin := $(XILINX_VIVADO)/bin/vivado
