@@ -8,11 +8,11 @@ VCS-MX (Optional, 2018 or newer)
 ## Directory Breakdown
 The bp_packaged_IP contains all of the IP related files while the script directory contains tcl scripts for Vivado. The scripts are broken into 3 parts so that the tool is not doing too much at once.
 
-####bp_packaged_IP:
+#### bp_packaged_IP:
 - src: all of the source files needed for BlackParrot IP
 - tb: all of the simulation files for BlackParrot IP
 
-####script:
+#### script:
 - proj_setup.tcl: sets up a Vivado project and VCS simulator
 - bd_setup.tcl: sets up a BlackParrot block diagram design
 - sim_launch.tcl launches a simulation
