@@ -26,7 +26,7 @@ The bp_packaged_IP contains all of the IP related files while the script directo
 6) the simulation will run the default prog.nbf file located in the bp_packaged_IP/tb directory. The file is defaulted to hello_world
 
 ## Version:
-The current version of this IP is BlackParrot_v0_11d0890
-Version: 0.0
-Branch: Master
-Commit: 11d0890dffc6b1d5fb5f81c3594dd894fe8e1653 
+The current version of this IP is BlackParrot_v0_1_11d0890
+- Version: 0.1
+- Branch: Master
+- Commit: 11d0890dffc6b1d5fb5f81c3594dd894fe8e1653 
