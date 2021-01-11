@@ -32,9 +32,9 @@ The bp_packaged_IP contains all of the IP related files while the script directo
 
 ## Version:
 The current version of this IP is BlackParrot_v0_11d0890
-Version: 0.1
-Branch: Master
-Commit: 11d0890dffc6b1d5fb5f81c3594dd894fe8e1653 
+- Version: 0.1
+- Branch: Master
+- Commit: 11d0890dffc6b1d5fb5f81c3594dd894fe8e1653 
 
 ## Link to user guide for future edit:
 https://docs.google.com/document/d/1zlZd0ds4BAZZSgVbIij9bjqovkxCjopxs6x_VEfgvrM/edit?usp=sharing
