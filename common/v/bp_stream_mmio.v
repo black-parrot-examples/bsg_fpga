@@ -3,14 +3,15 @@
  *
  */
 
+`include "bp_common_defines.svh"
+`include "bp_be_defines.svh"
+`include "bp_me_defines.svh"
+
+
 module bp_stream_mmio
 
   import bp_common_pkg::*;
-  import bp_common_aviary_pkg::*;
-  import bp_cce_pkg::*;
-  import bp_common_cfg_link_pkg::*;
   import bp_be_pkg::*;
-  import bp_be_dcache_pkg::*;
   import bp_me_pkg::*;
 
  #(parameter bp_params_e bp_params_p = e_bp_default_cfg
@@ -143,11 +144,11 @@ module bp_stream_mmio
   );
   
   logic sipo_v_lo, sipo_yumi_li;
-  logic [dword_width_p-1:0] sipo_data_lo;;
+  logic [dword_width_gp-1:0] sipo_data_lo;;
   
   bsg_serial_in_parallel_out_full
  #(.width_p(stream_data_width_p)
-  ,.els_p  (dword_width_p/stream_data_width_p)
+  ,.els_p  (dword_width_gp/stream_data_width_p)
   ) sipo
   (.clk_i  (clk_i)
   ,.reset_i(reset_i)

@@ -48,7 +48,6 @@
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/black-parrot/bp_common/src/include/bp_common_rv64_defines.svh"
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/black-parrot/bp_common/src/include/bp_common_rv64_pkg.sv"
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/black-parrot/bp_be/src/include/bp_be_internal_if_defines.svh"
-#    "/home/petrisko/scratch/bsg_fpga/vu37p/black-parrot/bp_be/src/include/bp_be_ctl_defines.svh"
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/black-parrot/bp_be/src/include/bp_be_pkg.sv"
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/black-parrot/bp_be/src/v/bp_be_calculator/bp_be_bypass.sv"
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/black-parrot/bp_be/src/v/bp_be_calculator/bp_be_calculator_top.sv"
@@ -60,9 +59,7 @@
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/black-parrot/bp_be/src/v/bp_be_dcache/bp_be_dcache.sv"
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/black-parrot/bp_be/src/v/bp_be_dcache/bp_be_dcache_decoder.sv"
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/black-parrot/bp_be/src/v/bp_be_dcache/bp_be_dcache_wbuf.sv"
-#    "/home/petrisko/scratch/bsg_fpga/vu37p/black-parrot/bp_be/src/v/bp_be_dcache/bp_be_dcache_wbuf_queue.sv"
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/black-parrot/bp_be/src/v/bp_be_checker/bp_be_detector.sv"
-#    "/home/petrisko/scratch/bsg_fpga/vu37p/black-parrot/bp_common/src/include/bp_common_cfg_link_pkg.sv"
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/black-parrot/bp_be/src/v/bp_be_checker/bp_be_director.sv"
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/black-parrot/bp_be/src/v/bp_be_calculator/bp_be_fp_to_rec.sv"
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/black-parrot/bp_be/src/v/bp_be_checker/bp_be_instr_decoder.sv"
@@ -78,10 +75,9 @@
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/black-parrot/bp_be/src/v/bp_be_checker/bp_be_regfile.sv"
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/black-parrot/bp_be/src/v/bp_be_checker/bp_be_scheduler.sv"
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/black-parrot/bp_be/src/v/bp_be_top.sv"
-#    "/home/petrisko/scratch/bsg_fpga/vu37p/black-parrot/bp_me/src/include/v/bp_mem_wormhole.svh"
-#    "/home/petrisko/scratch/bsg_fpga/vu37p/black-parrot/bp_me/src/include/v/bp_me_pkg.sv"
-#    "/home/petrisko/scratch/bsg_fpga/vu37p/black-parrot/bp_me/src/include/v/bp_cce_inst.svh"
-#    "/home/petrisko/scratch/bsg_fpga/vu37p/black-parrot/bp_me/src/include/v/bp_cce_pkg.sv"
+#    "/home/petrisko/scratch/bsg_fpga/vu37p/black-parrot/bp_me/src/include/bp_mem_wormhole.svh"
+#    "/home/petrisko/scratch/bsg_fpga/vu37p/black-parrot/bp_me/src/include/bp_me_pkg.sv"
+#    "/home/petrisko/scratch/bsg_fpga/vu37p/black-parrot/bp_me/src/include/bp_cce_inst.svh"
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/black-parrot/external/basejump_stl/bsg_noc/bsg_noc_pkg.v"
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/black-parrot/external/basejump_stl/bsg_noc/bsg_wormhole_router_pkg.v"
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/black-parrot/bp_top/src/v/bp_cacc_complex.sv"
@@ -109,12 +105,10 @@
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/black-parrot/bp_top/src/v/bp_cfg.sv"
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/black-parrot/bp_top/src/v/bp_clint_slice.sv"
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/black-parrot/bp_fe/src/include/bp_fe_defines.svh"
-#    "/home/petrisko/scratch/bsg_fpga/vu37p/black-parrot/bp_fe/src/include/bp_fe_icache.svh"
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/black-parrot/bp_fe/src/include/bp_fe_pkg.sv"
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/black-parrot/bp_top/src/v/bp_core.sv"
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/black-parrot/bp_top/src/v/bp_core_minimal.sv"
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/black-parrot/bp_top/src/v/bp_core_complex.sv"
-#    "/home/petrisko/scratch/bsg_fpga/vu37p/black-parrot/bp_fe/src/include/bp_fe_icache_pkg.sv"
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/black-parrot/bp_fe/src/v/bp_fe_bht.sv"
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/black-parrot/bp_fe/src/v/bp_fe_btb.sv"
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/black-parrot/bp_fe/src/v/bp_fe_icache.sv"
@@ -421,26 +415,15 @@ set files [list \
  [file normalize "${origin_dir}/black-parrot/bp_common/src/include/bp_common_defines.svh"] \
  [file normalize "${origin_dir}/black-parrot/bp_common/src/include/bp_common_pkg.sv"] \
  [file normalize "${origin_dir}/black-parrot/bp_common/src/include/bp_common_aviary_defines.svh"] \
- [file normalize "${origin_dir}/black-parrot/bp_common/src/include/bp_common_aviary_pkg.sv"] \
- [file normalize "${origin_dir}/black-parrot/bp_common/src/include/bp_common_csr_defines.svh"] \
- [file normalize "${origin_dir}/black-parrot/bp_common/src/include/bp_common_rv64_defines.svh"] \
- [file normalize "${origin_dir}/black-parrot/bp_common/src/include/bp_common_rv64_pkg.sv"] \
- [file normalize "${origin_dir}/black-parrot/bp_be/src/include/bp_be_internal_if_defines.svh"] \
- [file normalize "${origin_dir}/black-parrot/bp_be/src/include/bp_be_ctl_defines.svh"] \
  [file normalize "${origin_dir}/black-parrot/bp_be/src/include/bp_be_pkg.sv"] \
  [file normalize "${origin_dir}/black-parrot/bp_be/src/v/bp_be_calculator/bp_be_bypass.sv"] \
  [file normalize "${origin_dir}/black-parrot/bp_be/src/v/bp_be_calculator/bp_be_calculator_top.sv"] \
  [file normalize "${origin_dir}/black-parrot/bp_be/src/v/bp_be_calculator/bp_be_csr.sv"] \
- [file normalize "${origin_dir}/black-parrot/bp_be/src/include/bp_be_dcache_pkt.svh"] \
- [file normalize "${origin_dir}/black-parrot/bp_be/src/include/bp_be_dcache_wbuf_entry.svh"] \
- [file normalize "${origin_dir}/black-parrot/bp_be/src/include/bp_be_dcache_pkg.sv"] \
- [file normalize "${origin_dir}/black-parrot/bp_be/src/include/bp_be_hardfloat_pkg.sv"] \
  [file normalize "${origin_dir}/black-parrot/bp_be/src/v/bp_be_dcache/bp_be_dcache.sv"] \
  [file normalize "${origin_dir}/black-parrot/bp_be/src/v/bp_be_dcache/bp_be_dcache_decoder.sv"] \
  [file normalize "${origin_dir}/black-parrot/bp_be/src/v/bp_be_dcache/bp_be_dcache_wbuf.sv"] \
- [file normalize "${origin_dir}/black-parrot/bp_be/src/v/bp_be_dcache/bp_be_dcache_wbuf_queue.sv"] \
  [file normalize "${origin_dir}/black-parrot/bp_be/src/v/bp_be_checker/bp_be_detector.sv"] \
- [file normalize "${origin_dir}/black-parrot/bp_common/src/include/bp_common_cfg_link_pkg.sv"] \
+ [file normalize "${origin_dir}/black-parrot/bp_be/src/v/bp_be_checker/bp_be_scoreboard.sv"] \
  [file normalize "${origin_dir}/black-parrot/bp_be/src/v/bp_be_checker/bp_be_director.sv"] \
  [file normalize "${origin_dir}/black-parrot/bp_be/src/v/bp_be_calculator/bp_be_fp_to_rec.sv"] \
  [file normalize "${origin_dir}/black-parrot/bp_be/src/v/bp_be_checker/bp_be_instr_decoder.sv"] \
@@ -457,10 +440,7 @@ set files [list \
  [file normalize "${origin_dir}/black-parrot/bp_be/src/v/bp_be_checker/bp_be_scheduler.sv"] \
  [file normalize "${origin_dir}/black-parrot/bp_be/src/v/bp_be_checker/bp_be_issue_queue.sv"] \
  [file normalize "${origin_dir}/black-parrot/bp_be/src/v/bp_be_top.sv"] \
- [file normalize "${origin_dir}/black-parrot/bp_me/src/include/v/bp_mem_wormhole.svh"] \
- [file normalize "${origin_dir}/black-parrot/bp_me/src/include/v/bp_me_pkg.sv"] \
- [file normalize "${origin_dir}/black-parrot/bp_me/src/include/v/bp_cce_inst.svh"] \
- [file normalize "${origin_dir}/black-parrot/bp_me/src/include/v/bp_cce_pkg.sv"] \
+ [file normalize "${origin_dir}/black-parrot/bp_me/src/include/bp_me_pkg.sv"] \
  [file normalize "${origin_dir}/black-parrot/external/basejump_stl/bsg_noc/bsg_noc_pkg.v"] \
  [file normalize "${origin_dir}/black-parrot/external/basejump_stl/bsg_noc/bsg_wormhole_router_pkg.v"] \
  [file normalize "${origin_dir}/black-parrot/bp_top/src/v/bp_cacc_complex.sv"] \
@@ -481,19 +461,21 @@ set files [list \
  [file normalize "${origin_dir}/black-parrot/bp_me/src/v/cce/bp_cce_loopback.sv"] \
  [file normalize "${origin_dir}/black-parrot/bp_me/src/v/cce/bp_cce_msg.sv"] \
  [file normalize "${origin_dir}/black-parrot/bp_me/src/v/cce/bp_cce_pending_bits.sv"] \
+ [file normalize "${origin_dir}/black-parrot/bp_me/src/v/cce/bp_cce_pma.sv"] \
  [file normalize "${origin_dir}/black-parrot/bp_me/src/v/cce/bp_cce_reg.sv"] \
  [file normalize "${origin_dir}/black-parrot/bp_me/src/v/cce/bp_cce_spec_bits.sv"] \
  [file normalize "${origin_dir}/black-parrot/bp_me/src/v/cce/bp_cce_src_sel.sv"] \
  [file normalize "${origin_dir}/black-parrot/bp_me/src/v/cce/bp_cce_wrapper.sv"] \
  [file normalize "${origin_dir}/black-parrot/bp_top/src/v/bp_cfg.sv"] \
  [file normalize "${origin_dir}/black-parrot/bp_top/src/v/bp_clint_slice.sv"] \
+ [file normalize "${origin_dir}/black-parrot/bp_top/src/include/bp_top_defines.svh"] \
+ [file normalize "${origin_dir}/black-parrot/bp_be/src/include/bp_be_defines.svh"] \
+ [file normalize "${origin_dir}/black-parrot/bp_me/src/include/bp_me_defines.svh"] \
  [file normalize "${origin_dir}/black-parrot/bp_fe/src/include/bp_fe_defines.svh"] \
- [file normalize "${origin_dir}/black-parrot/bp_fe/src/include/bp_fe_icache.svh"] \
  [file normalize "${origin_dir}/black-parrot/bp_fe/src/include/bp_fe_pkg.sv"] \
  [file normalize "${origin_dir}/black-parrot/bp_top/src/v/bp_core.sv"] \
  [file normalize "${origin_dir}/black-parrot/bp_top/src/v/bp_core_minimal.sv"] \
  [file normalize "${origin_dir}/black-parrot/bp_top/src/v/bp_core_complex.sv"] \
- [file normalize "${origin_dir}/black-parrot/bp_fe/src/include/bp_fe_icache_pkg.sv"] \
  [file normalize "${origin_dir}/black-parrot/bp_fe/src/v/bp_fe_bht.sv"] \
  [file normalize "${origin_dir}/black-parrot/bp_fe/src/v/bp_fe_btb.sv"] \
  [file normalize "${origin_dir}/black-parrot/bp_fe/src/v/bp_fe_icache.sv"] \
@@ -538,6 +520,7 @@ set files [list \
  [file normalize "${origin_dir}/black-parrot/bp_top/src/v/bp_tile.sv"] \
  [file normalize "${origin_dir}/black-parrot/bp_top/src/v/bp_tile_node.sv"] \
  [file normalize "${origin_dir}/black-parrot/bp_common/src/v/bp_tlb.sv"] \
+ [file normalize "${origin_dir}/black-parrot/bp_common/src/v/bp_mmu.sv"] \
  [file normalize "${origin_dir}/black-parrot/external/basejump_stl/bsg_misc/bsg_adder_one_hot.v"] \
  [file normalize "${origin_dir}/black-parrot/external/basejump_stl/bsg_misc/bsg_arb_fixed.v"] \
  [file normalize "${origin_dir}/black-parrot/external/basejump_stl/bsg_misc/bsg_array_concentrate_static.v"] \
@@ -740,36 +723,6 @@ set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "Verilog Header" -objects $file_obj
 
-set file "$origin_dir/black-parrot/bp_common/src/include/bp_common_aviary_pkg.sv"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
-set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
-
-set file "$origin_dir/black-parrot/bp_common/src/include/bp_common_csr_defines.svh"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
-set_property -name "file_type" -value "Verilog Header" -objects $file_obj
-
-set file "$origin_dir/black-parrot/bp_common/src/include/bp_common_rv64_defines.svh"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
-set_property -name "file_type" -value "Verilog Header" -objects $file_obj
-
-set file "$origin_dir/black-parrot/bp_common/src/include/bp_common_rv64_pkg.sv"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
-set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
-
-set file "$origin_dir/black-parrot/bp_be/src/include/bp_be_internal_if_defines.svh"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
-set_property -name "file_type" -value "Verilog Header" -objects $file_obj
-
-set file "$origin_dir/black-parrot/bp_be/src/include/bp_be_ctl_defines.svh"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
-set_property -name "file_type" -value "Verilog Header" -objects $file_obj
-
 set file "$origin_dir/black-parrot/bp_be/src/include/bp_be_pkg.sv"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
@@ -790,26 +743,6 @@ set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
 
-set file "$origin_dir/black-parrot/bp_be/src/include/bp_be_dcache_pkt.svh"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
-set_property -name "file_type" -value "Verilog Header" -objects $file_obj
-
-set file "$origin_dir/black-parrot/bp_be/src/include/bp_be_dcache_wbuf_entry.svh"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
-set_property -name "file_type" -value "Verilog Header" -objects $file_obj
-
-set file "$origin_dir/black-parrot/bp_be/src/include/bp_be_dcache_pkg.sv"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
-set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
-
-set file "$origin_dir/black-parrot/bp_be/src/include/bp_be_hardfloat_pkg.sv"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
-set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
-
 set file "$origin_dir/black-parrot/bp_be/src/v/bp_be_dcache/bp_be_dcache.sv"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
@@ -825,17 +758,12 @@ set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
 
-set file "$origin_dir/black-parrot/bp_be/src/v/bp_be_dcache/bp_be_dcache_wbuf_queue.sv"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
-set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
-
 set file "$origin_dir/black-parrot/bp_be/src/v/bp_be_checker/bp_be_detector.sv"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
 
-set file "$origin_dir/black-parrot/bp_common/src/include/bp_common_cfg_link_pkg.sv"
+set file "$origin_dir/black-parrot/bp_be/src/v/bp_be_checker/bp_be_scoreboard.sv"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
@@ -920,22 +848,7 @@ set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
 
-set file "$origin_dir/black-parrot/bp_me/src/include/v/bp_mem_wormhole.svh"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
-set_property -name "file_type" -value "Verilog Header" -objects $file_obj
-
-set file "$origin_dir/black-parrot/bp_me/src/include/v/bp_me_pkg.sv"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
-set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
-
-set file "$origin_dir/black-parrot/bp_me/src/include/v/bp_cce_inst.svh"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
-set_property -name "file_type" -value "Verilog Header" -objects $file_obj
-
-set file "$origin_dir/black-parrot/bp_me/src/include/v/bp_cce_pkg.sv"
+set file "$origin_dir/black-parrot/bp_me/src/include/bp_me_pkg.sv"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
@@ -956,6 +869,11 @@ set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
 
 set file "$origin_dir/black-parrot/bp_me/src/v/cce/bp_cce.sv"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
+
+set file "$origin_dir/black-parrot/bp_me/src/v/cce/bp_cce_pma.sv"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
@@ -1070,12 +988,22 @@ set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
 
-set file "$origin_dir/black-parrot/bp_fe/src/include/bp_fe_defines.svh"
+set file "$origin_dir/black-parrot/bp_top/src/include/bp_top_defines.svh"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "Verilog Header" -objects $file_obj
 
-set file "$origin_dir/black-parrot/bp_fe/src/include/bp_fe_icache.svh"
+set file "$origin_dir/black-parrot/bp_me/src/include/bp_me_defines.svh"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property -name "file_type" -value "Verilog Header" -objects $file_obj
+
+set file "$origin_dir/black-parrot/bp_be/src/include/bp_be_defines.svh"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property -name "file_type" -value "Verilog Header" -objects $file_obj
+
+set file "$origin_dir/black-parrot/bp_fe/src/include/bp_fe_defines.svh"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "Verilog Header" -objects $file_obj
@@ -1096,11 +1024,6 @@ set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
 
 set file "$origin_dir/black-parrot/bp_top/src/v/bp_core_complex.sv"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
-set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
-
-set file "$origin_dir/black-parrot/bp_fe/src/include/bp_fe_icache_pkg.sv"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
@@ -1321,6 +1244,11 @@ set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
 
 set file "$origin_dir/black-parrot/bp_common/src/v/bp_tlb.sv"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
+
+set file "$origin_dir/black-parrot/bp_common/src/v/bp_mmu.sv"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj

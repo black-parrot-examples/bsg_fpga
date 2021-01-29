@@ -9,15 +9,17 @@
 //--------------------------------------------------------------------------------
 `timescale 1 ps / 1 ps
 
+`include "bp_common_defines.svh"
+`include "bp_fe_defines.svh"
+`include "bp_be_defines.svh"
+`include "bp_me_defines.svh"
+`include "bp_top_defines.svh"
+
 module design_1_wrapper
 
  import bp_common_pkg::*;
- import bp_common_aviary_pkg::*;
  import bp_be_pkg::*;
- import bp_common_rv64_pkg::*;
- import bp_cce_pkg::*;
  import bp_me_pkg::*;
- import bp_common_cfg_link_pkg::*;
  import bsg_noc_pkg::*;
  import bsg_wormhole_router_pkg::*;
  import bsg_cache_pkg::*;
@@ -414,10 +416,10 @@ bp_me_cce_to_mem_link_client
   bsg_cache_dma_pkt_s dma_pkt_lo;
   logic dma_pkt_v_lo, dma_pkt_yumi_li;
   
-  logic [dword_width_p-1:0] dma_data_li;
+  logic [dword_width_gp-1:0] dma_data_li;
   logic dma_data_v_li, dma_data_ready_lo;
   
-  logic [dword_width_p-1:0] dma_data_lo;
+  logic [dword_width_gp-1:0] dma_data_lo;
   logic dma_data_v_lo, dma_data_yumi_li;
   
   logic [cache_addr_width_p+1-1:0] cache_dma_pkt_lo;
@@ -459,8 +461,8 @@ bp_me_cce_to_mem_link_client
 
   bsg_cache_to_axi 
  #(.addr_width_p         (cache_addr_width_p)
-  ,.block_size_in_words_p(cce_block_width_p/dword_width_p)
-  ,.data_width_p         (dword_width_p)
+  ,.block_size_in_words_p(cce_block_width_p/dword_width_gp)
+  ,.data_width_p         (dword_width_gp)
   ,.num_cache_p          (1)
   ,.tag_fifo_els_p       (1)
 

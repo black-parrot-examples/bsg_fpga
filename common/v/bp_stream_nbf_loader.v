@@ -3,14 +3,14 @@
  *
  */
 
+`include "bp_common_defines.svh"
+`include "bp_be_defines.svh"
+`include "bp_me_defines.svh"
+
 module bp_stream_nbf_loader
 
   import bp_common_pkg::*;
-  import bp_common_aviary_pkg::*;
-  import bp_cce_pkg::*;
-  import bp_common_cfg_link_pkg::*;
   import bp_be_pkg::*;
-  import bp_be_dcache_pkg::*;
   import bp_me_pkg::*;
   
  #(parameter bp_params_e bp_params_p = e_bp_default_cfg
@@ -22,7 +22,7 @@ module bp_stream_nbf_loader
 
   ,parameter nbf_opcode_width_p = 8
   ,parameter nbf_addr_width_p = paddr_width_p
-  ,parameter nbf_data_width_p = dword_width_p
+  ,parameter nbf_data_width_p = dword_width_gp
   
   ,localparam nbf_width_lp = nbf_opcode_width_p + nbf_addr_width_p + nbf_data_width_p
   ,localparam nbf_num_flits_lp = `BSG_CDIV(nbf_width_lp, stream_data_width_p)
@@ -127,7 +127,7 @@ module bp_stream_nbf_loader
     freeze_addr.nonlocal = '0;
     freeze_addr.cce      = counter_r;
     freeze_addr.dev      = cfg_dev_gp;
-    freeze_addr.addr     = bp_cfg_reg_freeze_gp;
+    freeze_addr.addr     = cfg_reg_freeze_gp;
     
     case (curr_nbf.opcode)
       2: io_cmd.header.size = e_bedrock_msg_size_4;
