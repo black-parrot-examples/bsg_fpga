@@ -113,6 +113,7 @@ module bp_stream_nbf_loader
   
   assign done_o = (state_r == 3) & credits_empty_lo;
   
+  `declare_bp_memory_map(paddr_width_p, caddr_width_p)
   bp_local_addr_s freeze_addr;
  
  // combinational
@@ -125,7 +126,7 @@ module bp_stream_nbf_loader
     io_cmd.header.msg_type = e_bedrock_mem_uc_wr;
     
     freeze_addr.nonlocal = '0;
-    freeze_addr.cce      = counter_r;
+    freeze_addr.tile     = counter_r;
     freeze_addr.dev      = cfg_dev_gp;
     freeze_addr.addr     = cfg_reg_freeze_gp;
     

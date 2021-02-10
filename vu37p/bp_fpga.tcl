@@ -49,7 +49,6 @@
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/black-parrot/bp_common/src/include/bp_common_rv64_pkg.sv"
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/black-parrot/bp_be/src/include/bp_be_internal_if_defines.svh"
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/black-parrot/bp_be/src/include/bp_be_pkg.sv"
-#    "/home/petrisko/scratch/bsg_fpga/vu37p/black-parrot/bp_be/src/v/bp_be_calculator/bp_be_bypass.sv"
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/black-parrot/bp_be/src/v/bp_be_calculator/bp_be_calculator_top.sv"
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/black-parrot/bp_be/src/v/bp_be_calculator/bp_be_csr.sv"
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/black-parrot/bp_be/src/include/bp_be_dcache_pkt.svh"
@@ -416,7 +415,6 @@ set files [list \
  [file normalize "${origin_dir}/black-parrot/bp_common/src/include/bp_common_pkg.sv"] \
  [file normalize "${origin_dir}/black-parrot/bp_common/src/include/bp_common_aviary_defines.svh"] \
  [file normalize "${origin_dir}/black-parrot/bp_be/src/include/bp_be_pkg.sv"] \
- [file normalize "${origin_dir}/black-parrot/bp_be/src/v/bp_be_calculator/bp_be_bypass.sv"] \
  [file normalize "${origin_dir}/black-parrot/bp_be/src/v/bp_be_calculator/bp_be_calculator_top.sv"] \
  [file normalize "${origin_dir}/black-parrot/bp_be/src/v/bp_be_calculator/bp_be_csr.sv"] \
  [file normalize "${origin_dir}/black-parrot/bp_be/src/v/bp_be_dcache/bp_be_dcache.sv"] \
@@ -724,11 +722,6 @@ set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "Verilog Header" -objects $file_obj
 
 set file "$origin_dir/black-parrot/bp_be/src/include/bp_be_pkg.sv"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
-set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
-
-set file "$origin_dir/black-parrot/bp_be/src/v/bp_be_calculator/bp_be_bypass.sv"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
