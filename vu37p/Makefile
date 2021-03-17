@@ -13,7 +13,7 @@ endif
 
 blackparrot_dir := $(THIS_DIR)/black-parrot
 blackparrot_url := $(GITHUB)black-parrot/black-parrot
-blackparrot_commit := bea7783a
+blackparrot_commit := 0c572d1ec
 
 vivado_bin := $(XILINX_VIVADO)/bin/vivado
 
@@ -27,7 +27,6 @@ program_tcl_dir := $(script_dir)/program_fpga.tcl
 update_tcl_dir := $(script_dir)/update_tcl.tcl
 
 
-
 all: libs
 
 libs: $(blackparrot_dir)
@@ -39,7 +38,7 @@ $(blackparrot_dir):
 build: $(project_dir)
 
 $(project_dir): libs $(build_tcl_dir)
-	cd $(blackparrot_dir); make ucode
+	cd $(blackparrot_dir); make -C sdk bedrock
 	$(vivado_bin) -mode batch -source $(build_tcl_dir)
 
 open:

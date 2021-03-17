@@ -113,7 +113,7 @@ module bp_stream_nbf_loader
   
   assign done_o = (state_r == 3) & credits_empty_lo;
   
-  `declare_bp_memory_map(paddr_width_p, caddr_width_p)
+  `declare_bp_memory_map(paddr_width_p, caddr_width_p);
   bp_local_addr_s freeze_addr;
  
  // combinational

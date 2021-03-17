@@ -253,7 +253,7 @@ logic            nbf_dram_resp_v_lo, nbf_dram_resp_ready_li;
 bp_io_noc_ral_link_s proc_cmd_link_li, proc_cmd_link_lo;
 bp_io_noc_ral_link_s proc_resp_link_li, proc_resp_link_lo;
 
-bp_mem_noc_ral_link_s dram_cmd_link_lo, dram_resp_link_li;
+bp_mem_noc_ral_link_s [mc_x_dim_p-1:0] dram_cmd_link_lo, dram_resp_link_li;
 
 bp_bedrock_cce_mem_msg_s       host_cmd_li;
 logic                  host_cmd_v_li, host_cmd_yumi_lo;
@@ -345,30 +345,51 @@ bp_me_cce_to_mem_link_bidir
    ,.resp_link_o(proc_resp_link_li)
    );
 
-bp_me_cce_to_mem_link_client
- #(.bp_params_p(bp_params_p)
-   ,.num_outstanding_req_p(mem_noc_max_credits_p)
-   ,.flit_width_p(mem_noc_flit_width_p)
-   ,.cord_width_p(mem_noc_cord_width_p)
-   ,.cid_width_p(mem_noc_cid_width_p)
-   ,.len_width_p(mem_noc_len_width_p)
-   )
- dram_link
-  (.clk_i(mig_clk)
-   ,.reset_i(mig_reset)
+  `declare_bsg_cache_wh_header_flit_s(mem_noc_flit_width_p, mem_noc_cord_width_p, mem_noc_len_width_p, mem_noc_cid_width_p);
+  `declare_bsg_cache_dma_pkt_s(caddr_width_p);
+  bsg_cache_dma_pkt_s [num_cce_p-1:0] dma_pkt_lo;
+  logic [num_cce_p-1:0] dma_pkt_v_lo, dma_pkt_yumi_li;
+  logic [num_cce_p-1:0][l2_fill_width_p-1:0] dma_data_lo;
+  logic [num_cce_p-1:0] dma_data_v_lo, dma_data_yumi_li;
+  logic [num_cce_p-1:0][l2_fill_width_p-1:0] dma_data_li;
+  logic [num_cce_p-1:0] dma_data_v_li, dma_data_ready_and_lo;
+  localparam cce_per_col_lp = num_cce_p/mc_x_dim_p;
+  for (genvar i = 0; i < mc_x_dim_p; i++)
+    begin : column
+      bsg_cache_wh_header_flit_s header_flit;
+      assign header_flit = dram_cmd_link_lo[i];
+      wire [`BSG_SAFE_CLOG2(cce_per_col_lp)-1:0] dma_id_li = header_flit.src_cord-1'b1;
+      bsg_wormhole_to_cache_dma_fanout
+       #(.wh_flit_width_p(mem_noc_flit_width_p)
+         ,.wh_cid_width_p(mem_noc_cid_width_p)
+         ,.wh_len_width_p(mem_noc_len_width_p)
+         ,.wh_cord_width_p(mem_noc_cord_width_p)
 
-   ,.mem_cmd_o(dram_cmd_li)
-   ,.mem_cmd_v_o(dram_cmd_v_li)
-   ,.mem_cmd_yumi_i(dram_cmd_yumi_lo)
+         ,.num_dma_p(cce_per_col_lp)
+         ,.dma_addr_width_p(caddr_width_p)
+         ,.dma_burst_len_p(l2_block_size_in_fill_p)
+         )
+       wh_to_cache_dma
+        (.clk_i(mig_clk)
+         ,.reset_i(mig_reset)
 
-   ,.mem_resp_i(dram_resp_lo)
-   ,.mem_resp_v_i(dram_resp_ready_li & dram_resp_v_lo)
-   ,.mem_resp_ready_o(dram_resp_ready_li)
+         ,.wh_link_sif_i(dram_cmd_link_lo[i])
+         ,.wh_dma_id_i(dma_id_li)
+         ,.wh_link_sif_o(dram_resp_link_li[i])
 
-   ,.cmd_link_i(dram_cmd_link_lo)
-   ,.resp_link_o(dram_resp_link_li)
-   );
+         ,.dma_pkt_o(dma_pkt_lo[i*cce_per_col_lp+:cce_per_col_lp])
+         ,.dma_pkt_v_o(dma_pkt_v_lo[i*cce_per_col_lp+:cce_per_col_lp])
+         ,.dma_pkt_yumi_i(dma_pkt_yumi_li[i*cce_per_col_lp+:cce_per_col_lp])
 
+         ,.dma_data_i(dma_data_li[i*cce_per_col_lp+:cce_per_col_lp])
+         ,.dma_data_v_i(dma_data_v_li[i*cce_per_col_lp+:cce_per_col_lp])
+         ,.dma_data_ready_and_o(dma_data_ready_and_lo[i*cce_per_col_lp+:cce_per_col_lp])
+
+         ,.dma_data_o(dma_data_lo[i*cce_per_col_lp+:cce_per_col_lp])
+         ,.dma_data_v_o(dma_data_v_lo[i*cce_per_col_lp+:cce_per_col_lp])
+         ,.dma_data_yumi_i(dma_data_yumi_li[i*cce_per_col_lp+:cce_per_col_lp])
+         );
+    end
 
   logic nbf_done_lo;
 
@@ -410,48 +431,6 @@ bp_me_cce_to_mem_link_client
   ,.stream_ready_i (m_axi_lite_ready_lo)
   );
   
-  // CCE to cache dma
-  `declare_bsg_cache_dma_pkt_s(paddr_width_p);
-  
-  bsg_cache_dma_pkt_s dma_pkt_lo;
-  logic dma_pkt_v_lo, dma_pkt_yumi_li;
-  
-  logic [dword_width_gp-1:0] dma_data_li;
-  logic dma_data_v_li, dma_data_ready_lo;
-  
-  logic [dword_width_gp-1:0] dma_data_lo;
-  logic dma_data_v_lo, dma_data_yumi_li;
-  
-  logic [cache_addr_width_p+1-1:0] cache_dma_pkt_lo;
-    assign cache_dma_pkt_lo = {dma_pkt_lo.write_not_read, dma_pkt_lo[cache_addr_width_p-1:0]};
-
-  bp_me_cce_to_cache_dma
- #(.bp_params_p(bp_params_p)
-  ) mem_to_dma
-  (.clk_i           (mig_clk)
-  ,.reset_i         (mig_reset)
-                    
-  ,.dma_pkt_o       (dma_pkt_lo)
-  ,.dma_pkt_v_o     (dma_pkt_v_lo)
-  ,.dma_pkt_yumi_i  (dma_pkt_yumi_li)
-
-  ,.dma_data_i      (dma_data_li)
-  ,.dma_data_v_i    (dma_data_v_li)
-  ,.dma_data_ready_o(dma_data_ready_lo)
-
-  ,.dma_data_o      (dma_data_lo)
-  ,.dma_data_v_o    (dma_data_v_lo)
-  ,.dma_data_yumi_i (dma_data_yumi_li)
-
-  ,.mem_cmd_i       (dram_cmd_li)
-  ,.mem_cmd_v_i     (dram_cmd_v_li)
-  ,.mem_cmd_yumi_o  (dram_cmd_yumi_lo)
-
-  ,.mem_resp_o      (dram_resp_lo)
-  ,.mem_resp_v_o    (dram_resp_v_lo)
-  ,.mem_resp_ready_i(dram_resp_ready_li)
-  );
-
   // s_axi port
   // not supported
   assign s_axi_arqos    = '0;
@@ -463,9 +442,7 @@ bp_me_cce_to_mem_link_client
  #(.addr_width_p         (cache_addr_width_p)
   ,.block_size_in_words_p(cce_block_width_p/dword_width_gp)
   ,.data_width_p         (dword_width_gp)
-  ,.num_cache_p          (1)
-  ,.tag_fifo_els_p       (1)
-
+  ,.num_cache_p          (num_cce_p)
   ,.axi_id_width_p       (axi_id_width_p)
   ,.axi_addr_width_p     (axi_addr_width_p)
   ,.axi_data_width_p     (axi_data_width_p)
@@ -474,13 +451,13 @@ bp_me_cce_to_mem_link_client
   (.clk_i  (mig_clk)
   ,.reset_i(mig_reset)
   
-  ,.dma_pkt_i       (cache_dma_pkt_lo)
+  ,.dma_pkt_i       (dma_pkt_lo)
   ,.dma_pkt_v_i     (dma_pkt_v_lo)
   ,.dma_pkt_yumi_o  (dma_pkt_yumi_li)
   
   ,.dma_data_o      (dma_data_li)
   ,.dma_data_v_o    (dma_data_v_li)
-  ,.dma_data_ready_i(dma_data_ready_lo)
+  ,.dma_data_ready_i(dma_data_ready_and_lo)
   
   ,.dma_data_i      (dma_data_lo)
   ,.dma_data_v_i    (dma_data_v_lo)
