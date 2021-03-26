@@ -237,22 +237,8 @@ module design_1_wrapper
 `declare_bsg_ready_and_link_sif_s(mem_noc_flit_width_p, bp_mem_noc_ral_link_s);
 `declare_bp_bedrock_mem_if(paddr_width_p, cce_block_width_p, lce_id_width_p, lce_assoc_p, cce)
 
-bp_io_noc_ral_link_s [E:P] cmd_link_li, cmd_link_lo;
-bp_io_noc_ral_link_s [E:P] resp_link_li, resp_link_lo;
-
-bp_bedrock_cce_mem_msg_s dram_cmd_li;
-logic            dram_cmd_v_li, dram_cmd_yumi_lo;
-bp_bedrock_cce_mem_msg_s dram_resp_lo;
-logic            dram_resp_v_lo, dram_resp_ready_li;
-
-bp_bedrock_cce_mem_msg_s nbf_dram_cmd_li;
-logic            nbf_dram_cmd_v_li, nbf_dram_cmd_yumi_lo;
-bp_bedrock_cce_mem_msg_s nbf_dram_resp_lo;
-logic            nbf_dram_resp_v_lo, nbf_dram_resp_ready_li;
-
 bp_io_noc_ral_link_s proc_cmd_link_li, proc_cmd_link_lo;
 bp_io_noc_ral_link_s proc_resp_link_li, proc_resp_link_lo;
-
 bp_mem_noc_ral_link_s [mc_x_dim_p-1:0] dram_cmd_link_lo, dram_resp_link_li;
 
 bp_bedrock_cce_mem_msg_s       host_cmd_li;
@@ -438,10 +424,17 @@ bp_me_cce_to_mem_link_bidir
   assign s_axi_awqos    = '0;
   assign s_axi_awregion = '0;
 
+  // Trim dma_pkt for axi remap
+  logic [num_cce_p-1:0][cache_addr_width_p+1-1:0] cache_dma_pkt_lo;
+  for (genvar i = 0; i < num_cce_p; i++)
+    begin : dma_trim
+      assign cache_dma_pkt_lo[i] = {dma_pkt_lo[i].write_not_read, dma_pkt_lo[i][0+:cache_addr_width_p]};
+    end
+
   bsg_cache_to_axi 
  #(.addr_width_p         (cache_addr_width_p)
-  ,.block_size_in_words_p(cce_block_width_p/dword_width_gp)
-  ,.data_width_p         (dword_width_gp)
+  ,.block_size_in_words_p(l2_block_size_in_fill_p)
+  ,.data_width_p         (l2_fill_width_p)
   ,.num_cache_p          (num_cce_p)
   ,.axi_id_width_p       (axi_id_width_p)
   ,.axi_addr_width_p     (axi_addr_width_p)
@@ -451,7 +444,7 @@ bp_me_cce_to_mem_link_bidir
   (.clk_i  (mig_clk)
   ,.reset_i(mig_reset)
   
-  ,.dma_pkt_i       (dma_pkt_lo)
+  ,.dma_pkt_i       (cache_dma_pkt_lo)
   ,.dma_pkt_v_i     (dma_pkt_v_lo)
   ,.dma_pkt_yumi_o  (dma_pkt_yumi_li)
   
