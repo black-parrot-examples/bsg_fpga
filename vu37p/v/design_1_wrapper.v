@@ -242,7 +242,7 @@ bp_io_noc_ral_link_s proc_resp_link_li, proc_resp_link_lo;
 bp_mem_noc_ral_link_s [mc_x_dim_p-1:0] dram_cmd_link_lo, dram_resp_link_li;
 
 bp_bedrock_cce_mem_msg_s       host_cmd_li;
-logic                  host_cmd_v_li, host_cmd_yumi_lo;
+logic                  host_cmd_v_li, host_cmd_ready_lo;
 bp_bedrock_cce_mem_msg_s       host_resp_lo;
 logic                  host_resp_v_lo, host_resp_ready_li;
 
@@ -319,7 +319,7 @@ bp_me_cce_to_mem_link_bidir
 
    ,.mem_cmd_o(host_cmd_li)
    ,.mem_cmd_v_o(host_cmd_v_li)
-   ,.mem_cmd_yumi_i(host_cmd_yumi_lo)
+   ,.mem_cmd_yumi_i(host_cmd_ready_lo & host_cmd_v_li)
 
    ,.mem_resp_i(host_resp_lo)
    ,.mem_resp_v_i(host_resp_v_lo)
@@ -393,11 +393,11 @@ bp_me_cce_to_mem_link_bidir
   
   ,.io_cmd_i       (host_cmd_li)
   ,.io_cmd_v_i     (host_cmd_v_li)
-  ,.io_cmd_yumi_o  (host_cmd_yumi_lo)
+  ,.io_cmd_ready_o (host_cmd_ready_lo)
 
   ,.io_resp_o      (host_resp_lo)
   ,.io_resp_v_o    (host_resp_v_lo)
-  ,.io_resp_ready_i(host_resp_ready_li)
+  ,.io_resp_yumi_i (host_resp_ready_li & host_resp_v_lo)
 
   ,.io_cmd_o       (nbf_cmd_lo)
   ,.io_cmd_v_o     (nbf_cmd_v_lo)

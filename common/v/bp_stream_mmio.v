@@ -26,11 +26,11 @@ module bp_stream_mmio
   
   ,input  [cce_mem_msg_width_lp-1:0]        io_cmd_i
   ,input                                    io_cmd_v_i
-  ,output                                   io_cmd_yumi_o
+  ,output logic                             io_cmd_ready_o
   
   ,output [cce_mem_msg_width_lp-1:0]        io_resp_o
   ,output                                   io_resp_v_o
-  ,input                                    io_resp_ready_i
+  ,input                                    io_resp_yumi_i
   
   ,input                                    stream_v_i
   ,input  [stream_data_width_p-1:0]         stream_data_i
@@ -46,8 +46,21 @@ module bp_stream_mmio
   // Temporarily support cce_data_size less than stream_data_width_p only
   // Temporarily support response of 64-bits data only
   bp_bedrock_cce_mem_msg_s io_cmd, io_resp;
-  assign io_cmd = io_cmd_i;
   
+  logic io_cmd_v_li, io_cmd_yumi_lo;
+  bsg_two_fifo
+ #(.width_p(cce_mem_msg_width_lp))
+ cmd_fifo
+  (.clk_i(clk_i)
+   ,.reset_i(reset_i)
+   ,.data_i(io_cmd_i)
+   ,.v_i(io_cmd_v_i)
+   ,.ready_o(io_cmd_ready_o)
+   ,.data_o(io_cmd)
+   ,.v_o(io_cmd_v_li)
+   ,.yumi_i(io_cmd_yumi_lo)
+   );
+
   // streaming out fifo
   logic out_fifo_v_li, out_fifo_ready_lo;
   logic [stream_data_width_p-1:0] out_fifo_data_li;
@@ -95,9 +108,6 @@ module bp_stream_mmio
         state_r <= state_n;
       end
   
-  logic io_cmd_yumi_lo;
-  assign io_cmd_yumi_o = io_cmd_yumi_lo;
-  
   always_comb
   begin
     state_n = state_r;
@@ -108,7 +118,7 @@ module bp_stream_mmio
     
     if (state_r == 0)
       begin
-        if (io_cmd_v_i & out_fifo_ready_lo & queue_fifo_ready_lo)
+        if (io_cmd_v_li & out_fifo_ready_lo & queue_fifo_ready_lo)
           begin
             out_fifo_v_li = 1'b1;
             out_fifo_data_li = io_cmd.header.addr;
@@ -117,7 +127,7 @@ module bp_stream_mmio
       end
     else if (state_r == 1)
       begin
-        if (io_cmd_v_i & out_fifo_ready_lo & queue_fifo_ready_lo)
+        if (io_cmd_v_li & out_fifo_ready_lo & queue_fifo_ready_lo)
           begin
             out_fifo_v_li = 1'b1;
             io_cmd_yumi_lo = 1'b1;
@@ -140,7 +150,7 @@ module bp_stream_mmio
   ,.ready_o(io_resp_ready_lo)
   ,.data_o (io_resp_o)
   ,.v_o    (io_resp_v_o)
-  ,.yumi_i (io_resp_ready_i & io_resp_v_o)
+  ,.yumi_i (io_resp_yumi_i)
   );
   
   logic sipo_v_lo, sipo_yumi_li;

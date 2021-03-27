@@ -26,11 +26,11 @@ module bp_stream_host
 
   ,input  [cce_mem_msg_width_lp-1:0]            io_cmd_i
   ,input                                        io_cmd_v_i
-  ,output                                       io_cmd_yumi_o
+  ,output                                       io_cmd_ready_o
 
   ,output [cce_mem_msg_width_lp-1:0]            io_resp_o
   ,output                                       io_resp_v_o
-  ,input                                        io_resp_ready_i
+  ,input                                        io_resp_yumi_i
   
   ,output [cce_mem_msg_width_lp-1:0]            io_cmd_o
   ,output                                       io_cmd_v_o
@@ -77,11 +77,11 @@ module bp_stream_host
 
   ,.io_cmd_o       (io_cmd_o)
   ,.io_cmd_v_o     (io_cmd_v_o)
-  ,.io_cmd_yumi_i (io_cmd_yumi_i)
+  ,.io_cmd_yumi_i  (io_cmd_yumi_i)
 
   ,.io_resp_i      (io_resp_i)
   ,.io_resp_v_i    (io_resp_v_i)
-  ,.io_resp_ready_o (io_resp_ready_o)
+  ,.io_resp_ready_o(io_resp_ready_o)
 
   ,.stream_v_i     (nbf_v_li)
   ,.stream_data_i  (stream_data_i)
@@ -98,11 +98,11 @@ module bp_stream_host
 
   ,.io_cmd_i        (io_cmd_i)
   ,.io_cmd_v_i      (io_cmd_v_i)
-  ,.io_cmd_yumi_o   (io_cmd_yumi_o)
+  ,.io_cmd_ready_o  (io_cmd_ready_o)
 
   ,.io_resp_o       (io_resp_o)
   ,.io_resp_v_o     (io_resp_v_o)
-  ,.io_resp_ready_i (io_resp_ready_i)
+  ,.io_resp_yumi_i  (io_resp_yumi_i)
 
   ,.stream_v_i      (mmio_v_li)
   ,.stream_data_i   (stream_data_i)
