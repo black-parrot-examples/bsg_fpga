@@ -272,7 +272,6 @@
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/black-parrot/external/HardFloat/source/addRecFN.v"
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/black-parrot/external/HardFloat/source/mulRecFN.v"
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/black-parrot/bp_me/test/common/bp_cce_mmio_cfg_loader.sv"
-#    "/home/petrisko/scratch/bsg_fpga/common/v/bp_nbf_to_cce_mem.v"
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/black-parrot/external/basejump_stl/bsg_misc/bsg_mux_butterfly.v"
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/black-parrot/external/basejump_stl/bsg_misc/bsg_swap.v"
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/black-parrot/sdk/bedrock/roms/mesi.mem"
@@ -643,7 +642,6 @@ set files [list \
  [file normalize "${origin_dir}/black-parrot/external/HardFloat/source/addRecFN.v"] \
  [file normalize "${origin_dir}/black-parrot/external/HardFloat/source/mulRecFN.v"] \
  [file normalize "${origin_dir}/black-parrot/bp_me/test/common/bp_cce_mmio_cfg_loader.sv"] \
- [file normalize "${origin_dir}/../common/v/bp_nbf_to_cce_mem.v"] \
  [file normalize "${origin_dir}/black-parrot/external/basejump_stl/bsg_misc/bsg_mux_butterfly.v"] \
  [file normalize "${origin_dir}/black-parrot/external/basejump_stl/bsg_misc/bsg_swap.v"] \
  [file normalize "${origin_dir}/black-parrot/sdk/bedrock/roms/mesi.mem"] \
@@ -1872,11 +1870,6 @@ set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
 
 set file "$origin_dir/black-parrot/bp_me/test/common/bp_cce_mmio_cfg_loader.sv"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
-set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
-
-set file "$origin_dir/../common/v/bp_nbf_to_cce_mem.v"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
