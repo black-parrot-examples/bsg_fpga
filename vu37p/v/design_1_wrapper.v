@@ -24,7 +24,7 @@ module design_1_wrapper
  import bsg_wormhole_router_pkg::*;
  import bsg_cache_pkg::*;
 
- #(parameter bp_params_e bp_params_p = e_bp_multicore_1_cfg
+ #(parameter bp_params_e bp_params_p = e_bp_unicore_cfg
    `declare_bp_proc_params(bp_params_p)
    `declare_bp_bedrock_mem_if_widths(paddr_width_p, cce_block_width_p, lce_id_width_p, lce_assoc_p, cce)
    
@@ -253,9 +253,9 @@ module design_1_wrapper
   logic [num_cce_p-1:0][l2_fill_width_p-1:0] dma_data_li;
   logic [num_cce_p-1:0] dma_data_v_li, dma_data_ready_and_lo;
 
-// Chip
-if (multicore_p == 1)
-  begin : multicore
+  // Chip
+  if (multicore_p == 1)
+    begin : multicore
       `declare_bsg_ready_and_link_sif_s(io_noc_flit_width_p, bp_io_noc_ral_link_s);
       `declare_bsg_ready_and_link_sif_s(mem_noc_flit_width_p, bp_mem_noc_ral_link_s);
       bp_io_noc_ral_link_s proc_cmd_link_li, proc_cmd_link_lo;
@@ -374,7 +374,45 @@ if (multicore_p == 1)
              ,.dma_data_yumi_i(dma_data_yumi_li[i*cce_per_col_lp+:cce_per_col_lp])
              );
         end
-  end
+    end
+  else
+    begin : unicore
+      bp_unicore
+       #(.bp_params_p(bp_params_p))
+       proc
+        (.clk_i(mig_clk)
+         ,.reset_i(mig_reset)
+
+         ,.io_cmd_o(proc_cmd_lo)
+         ,.io_cmd_v_o(proc_cmd_v_lo)
+         ,.io_cmd_ready_i(proc_cmd_ready_li)
+
+         ,.io_resp_i(proc_resp_li)
+         ,.io_resp_v_i(proc_resp_v_li)
+         ,.io_resp_yumi_o(proc_resp_yumi_lo)
+
+         ,.io_cmd_i(proc_cmd_li)
+         ,.io_cmd_v_i(proc_cmd_v_li)
+         ,.io_cmd_yumi_o(proc_cmd_yumi_lo)
+
+         ,.io_resp_o(proc_resp_lo)
+         ,.io_resp_v_o(proc_resp_v_lo)
+         ,.io_resp_ready_i(proc_resp_ready_li)
+
+         ,.dma_pkt_o(dma_pkt_lo)
+         ,.dma_pkt_v_o(dma_pkt_v_lo)
+         ,.dma_pkt_yumi_i(dma_pkt_yumi_li)
+
+         ,.dma_data_i(dma_data_li)
+         ,.dma_data_v_i(dma_data_v_li)
+         ,.dma_data_ready_and_o(dma_data_ready_and_lo)
+
+         ,.dma_data_o(dma_data_lo)
+         ,.dma_data_v_o(dma_data_v_lo)
+         ,.dma_data_yumi_i(dma_data_yumi_li)
+         );
+    end
+     
 
   logic nbf_done_lo;
 

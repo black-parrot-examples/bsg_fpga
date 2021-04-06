@@ -462,6 +462,7 @@ set files [list \
  [file normalize "${origin_dir}/black-parrot/bp_me/src/v/cce/bp_cce_spec_bits.sv"] \
  [file normalize "${origin_dir}/black-parrot/bp_me/src/v/cce/bp_cce_src_sel.sv"] \
  [file normalize "${origin_dir}/black-parrot/bp_me/src/v/cce/bp_cce_wrapper.sv"] \
+ [file normalize "${origin_dir}/black-parrot/bp_me/src/v/cce/bp_uce.sv"] \
  [file normalize "${origin_dir}/black-parrot/bp_top/src/v/bp_cfg.sv"] \
  [file normalize "${origin_dir}/black-parrot/bp_top/src/v/bp_clint_slice.sv"] \
  [file normalize "${origin_dir}/black-parrot/bp_top/src/include/bp_top_defines.svh"] \
@@ -504,6 +505,8 @@ set files [list \
  [file normalize "${origin_dir}/black-parrot/bp_me/src/v/wormhole/bp_me_wormhole_packet_encode_mem_resp.sv"] \
  [file normalize "${origin_dir}/black-parrot/bp_top/src/v/bp_mem_complex.sv"] \
  [file normalize "${origin_dir}/black-parrot/bp_top/src/v/bp_multicore.sv"] \
+ [file normalize "${origin_dir}/black-parrot/bp_top/src/v/bp_unicore.sv"] \
+ [file normalize "${origin_dir}/black-parrot/bp_top/src/v/bp_unicore_lite.sv"] \
  [file normalize "${origin_dir}/black-parrot/bp_top/src/v/bp_nd_socket.sv"] \
  [file normalize "${origin_dir}/black-parrot/bp_common/src/v/bp_pma.sv"] \
  [file normalize "${origin_dir}/black-parrot/bp_top/src/v/bp_sacc_complex.sv"] \
@@ -974,6 +977,11 @@ set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
 
+set file "$origin_dir/black-parrot/bp_me/src/v/cce/bp_uce.sv"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
+
 set file "$origin_dir/black-parrot/bp_top/src/v/bp_cfg.sv"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
@@ -1175,6 +1183,16 @@ set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
 
 set file "$origin_dir/black-parrot/bp_top/src/v/bp_mem_complex.sv"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
+
+set file "$origin_dir/black-parrot/bp_top/src/v/bp_unicore.sv"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
+
+set file "$origin_dir/black-parrot/bp_top/src/v/bp_unicore_lite.sv"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
