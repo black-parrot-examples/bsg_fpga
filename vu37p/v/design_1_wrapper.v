@@ -305,8 +305,8 @@ bp_me_cce_to_mem_link_bidir
    ,.reset_i(mig_reset)
 
    ,.mem_cmd_i(nbf_cmd_lo)
-   ,.mem_cmd_v_i(nbf_cmd_ready_li & nbf_cmd_v_lo)
-   ,.mem_cmd_ready_o(nbf_cmd_ready_li)
+   ,.mem_cmd_v_i(nbf_cmd_v_lo)
+   ,.mem_cmd_ready_and_o(nbf_cmd_ready_li)
 
    ,.mem_resp_o(nbf_resp_li)
    ,.mem_resp_v_o(nbf_resp_v_li)
@@ -323,7 +323,7 @@ bp_me_cce_to_mem_link_bidir
 
    ,.mem_resp_i(host_resp_lo)
    ,.mem_resp_v_i(host_resp_v_lo)
-   ,.mem_resp_ready_o(host_resp_ready_li)
+   ,.mem_resp_ready_and_o(host_resp_ready_li)
 
    ,.cmd_link_i(proc_cmd_link_lo)
    ,.cmd_link_o(proc_cmd_link_li)
