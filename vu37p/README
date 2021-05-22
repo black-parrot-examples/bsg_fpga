@@ -4,7 +4,7 @@
 2. export XVC_URL=<ip_addr:port_num>
 
 /* first time setup */
-    make libs
+    make prep -j <N>
     make build
 
 /* generate bitstream */
