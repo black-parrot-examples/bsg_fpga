@@ -34,13 +34,12 @@ update_tcl_dir := $(script_dir)/update_tcl.tcl
 all: libs
 libs: $(rtl_dir)
 $(rtl_dir):
-	git clone $(rtl_url) $(rtl_dir)
-	cd $(rtl_dir); git checkout $(rtl_commit)
+	git clone -b $(rtl_commit) $(rtl_url) $(rtl_dir)
 $(sdk_dir):
-	git clone $(sdk_url) $(sdk_dir)
-	cd $(sdk_dir); git checkout $(sdk_commit)
+	git clone -b $(sdk_commit) $(sdk_url) $(sdk_dir)
 
 prep: $(rtl_dir) $(sdk_dir)
+	$(MAKE) -C $(rtl_dir) libs
 	$(MAKE) -C $(rtl_dir) tools
 	$(MAKE) -C $(sdk_dir) sdk
 	$(MAKE) -C $(sdk_dir) prog
