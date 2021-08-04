@@ -30,7 +30,6 @@ module design_1_wrapper
    
   ,parameter load_nbf_p = 1
    
-  ,localparam cache_addr_width_p = 30 - `BSG_SAFE_CLOG2(1) // one cache_dma
   ,localparam axi_id_width_p     = 1
   ,localparam axi_addr_width_p   = 30
   ,localparam axi_data_width_p   = 256
@@ -123,6 +122,7 @@ module design_1_wrapper
   wire [31:0]s_apb_pwdata = '0;
   wire s_apb_pwrite = 1'b0;
 
+  wire [caddr_width_p-1:0] s_axi_araddr_addr;
   wire [29:0]s_axi_araddr;
   wire [1:0]s_axi_arburst;
   wire [3:0]s_axi_arcache;
@@ -424,27 +424,19 @@ bp_me_cce_to_mem_link_bidir
   assign s_axi_awqos    = '0;
   assign s_axi_awregion = '0;
 
-  // Trim dma_pkt for axi remap
-  logic [num_cce_p-1:0][cache_addr_width_p+1-1:0] cache_dma_pkt_lo;
-  for (genvar i = 0; i < num_cce_p; i++)
-    begin : dma_trim
-      assign cache_dma_pkt_lo[i] = {dma_pkt_lo[i].write_not_read, dma_pkt_lo[i][0+:cache_addr_width_p]};
-    end
-
   bsg_cache_to_axi 
- #(.addr_width_p         (cache_addr_width_p)
+ #(.addr_width_p         (caddr_width_p)
   ,.block_size_in_words_p(l2_block_size_in_fill_p)
   ,.data_width_p         (l2_fill_width_p)
   ,.num_cache_p          (num_cce_p)
   ,.axi_id_width_p       (axi_id_width_p)
-  ,.axi_addr_width_p     (axi_addr_width_p)
   ,.axi_data_width_p     (axi_data_width_p)
   ,.axi_burst_len_p      (axi_burst_len_p)
   ) cache_to_axi 
   (.clk_i  (mig_clk)
   ,.reset_i(mig_reset)
   
-  ,.dma_pkt_i       (cache_dma_pkt_lo)
+  ,.dma_pkt_i       (dma_pkt_lo)
   ,.dma_pkt_v_i     (dma_pkt_v_lo)
   ,.dma_pkt_yumi_o  (dma_pkt_yumi_li)
   
@@ -457,7 +449,8 @@ bp_me_cce_to_mem_link_bidir
   ,.dma_data_yumi_o (dma_data_yumi_li)
 
   ,.axi_awid_o      (s_axi_awid)
-  ,.axi_awaddr_o    (s_axi_awaddr)
+  ,.axi_awaddr_addr_o    (s_axi_awaddr_addr)
+  ,.axi_awaddr_cache_id_o(s_axi_awaddr_cache_id)
   ,.axi_awlen_o     (s_axi_awlen)
   ,.axi_awsize_o    (s_axi_awsize)
   ,.axi_awburst_o   (s_axi_awburst)
@@ -479,7 +472,8 @@ bp_me_cce_to_mem_link_bidir
   ,.axi_bready_o    (s_axi_bready)
                     
   ,.axi_arid_o      (s_axi_arid)
-  ,.axi_araddr_o    (s_axi_araddr)
+  ,.axi_araddr_addr_o    (s_axi_araddr_addr)
+  ,.axi_araddr_cache_id_o(s_axi_araddr_cache_id)
   ,.axi_arlen_o     (s_axi_arlen)
   ,.axi_arsize_o    (s_axi_arsize)
   ,.axi_arburst_o   (s_axi_arburst)
@@ -496,6 +490,8 @@ bp_me_cce_to_mem_link_bidir
   ,.axi_rvalid_i    (s_axi_rvalid)
   ,.axi_rready_o    (s_axi_rready)
   );
+  assign s_axi_awaddr = s_axi_awaddr_addr;// - dram_base_addr_gp;
+  assign s_axi_araddr = s_axi_araddr_addr;// - dram_base_addr_gp;
   
   // LED breathing
   logic led_breath;

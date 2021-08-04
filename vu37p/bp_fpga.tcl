@@ -32,9 +32,6 @@
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/rtl/external/basejump_stl/bsg_misc/bsg_defines.v"
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/rtl/external/HardFloat/source/RISCV/HardFloat_specialize.vi"
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/rtl/external/HardFloat/source/HardFloat_consts.vi"
-#    "/home/petrisko/scratch/bsg_fpga/vu37p/rtl/external/basejump_stl/bsg_misc/bsg_adder_cin.v"
-#    "/home/petrisko/scratch/bsg_fpga/vu37p/rtl/external/basejump_stl/bsg_misc/bsg_buf_ctrl.v"
-#    "/home/petrisko/scratch/bsg_fpga/vu37p/rtl/external/basejump_stl/bsg_misc/bsg_nor2.v"
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/rtl/external/HardFloat/source/HardFloat_primitives.v"
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/rtl/external/HardFloat/source/HardFloat_rawFN.v"
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/rtl/external/HardFloat/source/RISCV/HardFloat_specialize.v"
@@ -400,9 +397,6 @@ set files [list \
  [file normalize "${origin_dir}/rtl/external/basejump_stl/bsg_misc/bsg_defines.v"] \
  [file normalize "${origin_dir}/rtl/external/HardFloat/source/RISCV/HardFloat_specialize.vi"] \
  [file normalize "${origin_dir}/rtl/external/HardFloat/source/HardFloat_consts.vi"] \
- [file normalize "${origin_dir}/rtl/external/basejump_stl/bsg_misc/bsg_adder_cin.v"] \
- [file normalize "${origin_dir}/rtl/external/basejump_stl/bsg_misc/bsg_buf_ctrl.v"] \
- [file normalize "${origin_dir}/rtl/external/basejump_stl/bsg_misc/bsg_nor2.v"] \
  [file normalize "${origin_dir}/rtl/external/HardFloat/source/HardFloat_primitives.v"] \
  [file normalize "${origin_dir}/rtl/external/HardFloat/source/HardFloat_rawFN.v"] \
  [file normalize "${origin_dir}/rtl/external/HardFloat/source/RISCV/HardFloat_specialize.v"] \
@@ -436,6 +430,7 @@ set files [list \
  [file normalize "${origin_dir}/rtl/bp_be/src/v/bp_be_checker/bp_be_issue_queue.sv"] \
  [file normalize "${origin_dir}/rtl/bp_be/src/v/bp_be_checker/bp_be_cmd_queue.sv"] \
  [file normalize "${origin_dir}/rtl/bp_be/src/v/bp_be_top.sv"] \
+ [file normalize "${origin_dir}/rtl/bp_top/src/include/bp_top_pkg.sv"] \
  [file normalize "${origin_dir}/rtl/bp_me/src/include/bp_me_pkg.sv"] \
  [file normalize "${origin_dir}/rtl/external/basejump_stl/bsg_noc/bsg_noc_pkg.v"] \
  [file normalize "${origin_dir}/rtl/external/basejump_stl/bsg_noc/bsg_wormhole_router_pkg.v"] \
@@ -454,7 +449,8 @@ set files [list \
  [file normalize "${origin_dir}/rtl/bp_me/src/v/cce/bp_cce_inst_predecode.sv"] \
  [file normalize "${origin_dir}/rtl/bp_me/src/v/cce/bp_cce_inst_ram.sv"] \
  [file normalize "${origin_dir}/rtl/bp_me/src/v/cce/bp_cce_inst_stall.sv"] \
- [file normalize "${origin_dir}/rtl/bp_top/src/v/bp_loopback.sv"] \
+ [file normalize "${origin_dir}/rtl/bp_me/src/v/dev/bp_me_loopback.sv"] \
+ [file normalize "${origin_dir}/rtl/bp_me/src/v/dev/bp_me_bedrock_register.sv"] \
  [file normalize "${origin_dir}/rtl/bp_me/src/v/cce/bp_cce_msg.sv"] \
  [file normalize "${origin_dir}/rtl/bp_me/src/v/cce/bp_cce_pending_bits.sv"] \
  [file normalize "${origin_dir}/rtl/bp_me/src/v/cce/bp_cce_pma.sv"] \
@@ -462,8 +458,9 @@ set files [list \
  [file normalize "${origin_dir}/rtl/bp_me/src/v/cce/bp_cce_spec_bits.sv"] \
  [file normalize "${origin_dir}/rtl/bp_me/src/v/cce/bp_cce_src_sel.sv"] \
  [file normalize "${origin_dir}/rtl/bp_me/src/v/cce/bp_cce_wrapper.sv"] \
- [file normalize "${origin_dir}/rtl/bp_top/src/v/bp_cfg.sv"] \
- [file normalize "${origin_dir}/rtl/bp_top/src/v/bp_clint_slice.sv"] \
+ [file normalize "${origin_dir}/rtl/bp_me/src/v/dev/bp_me_cfg.sv"] \
+ [file normalize "${origin_dir}/rtl/bp_me/src/v/dev/bp_me_clint_slice.sv"] \
+ [file normalize "${origin_dir}/rtl/external/basejump_stl/bsg_cache/bsg_cache.vh"] \
  [file normalize "${origin_dir}/rtl/bp_top/src/include/bp_top_defines.svh"] \
  [file normalize "${origin_dir}/rtl/bp_be/src/include/bp_be_defines.svh"] \
  [file normalize "${origin_dir}/rtl/bp_me/src/include/bp_me_defines.svh"] \
@@ -592,6 +589,7 @@ set files [list \
  [file normalize "${origin_dir}/rtl/external/basejump_stl/bsg_mem/bsg_mem_3r1w_sync_synth.v"] \
  [file normalize "${origin_dir}/rtl/external/basejump_stl/bsg_noc/bsg_mesh_stitch.v"] \
  [file normalize "${origin_dir}/rtl/external/basejump_stl/bsg_misc/bsg_mux.v"] \
+ [file normalize "${origin_dir}/rtl/external/basejump_stl/bsg_misc/bsg_adder_cin.v"] \
  [file normalize "${origin_dir}/rtl/external/basejump_stl/bsg_misc/bsg_mux_bitwise.v"] \
  [file normalize "${origin_dir}/rtl/external/basejump_stl/bsg_misc/bsg_mux_one_hot.v"] \
  [file normalize "${origin_dir}/rtl/external/basejump_stl/bsg_misc/bsg_mux_segmented.v"] \
@@ -845,6 +843,11 @@ set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
 
+set file "$origin_dir/rtl/bp_top/src/include/bp_top_pkg.sv"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
+
 set file "$origin_dir/rtl/bp_me/src/include/bp_me_pkg.sv"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
@@ -940,7 +943,12 @@ set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
 
-set file "$origin_dir/rtl/bp_top/src/v/bp_loopback.sv"
+set file "$origin_dir/rtl/bp_me/src/v/dev/bp_me_loopback.sv"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
+
+set file "$origin_dir/rtl/bp_me/src/v/dev/bp_me_bedrock_register.sv"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
@@ -975,15 +983,20 @@ set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
 
-set file "$origin_dir/rtl/bp_top/src/v/bp_cfg.sv"
+set file "$origin_dir/rtl/bp_me/src/v/dev/bp_me_cfg.sv"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
 
-set file "$origin_dir/rtl/bp_top/src/v/bp_clint_slice.sv"
+set file "$origin_dir/rtl/bp_me/src/v/dev/bp_me_clint_slice.sv"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
+
+set file "$origin_dir/rtl/external/basejump_stl/bsg_cache/bsg_cache.vh"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property -name "file_type" -value "Verilog Header" -objects $file_obj
 
 set file "$origin_dir/rtl/bp_top/src/include/bp_top_defines.svh"
 set file [file normalize $file]
@@ -1616,6 +1629,11 @@ set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
 
 set file "$origin_dir/rtl/external/basejump_stl/bsg_noc/bsg_mesh_stitch.v"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
+
+set file "$origin_dir/rtl/external/basejump_stl/bsg_misc/bsg_adder_cin.v"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
