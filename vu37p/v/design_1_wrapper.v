@@ -122,7 +122,8 @@ module design_1_wrapper
   wire [31:0]s_apb_pwdata = '0;
   wire s_apb_pwrite = 1'b0;
 
-  wire [caddr_width_p-1:0] s_axi_araddr_addr;
+  wire [daddr_width_p-1:0] s_axi_araddr_addr;
+  wire [`BSG_SAFE_CLOG2(num_cce_p)-1:0] s_axi_araddr_cache_id;
   wire [29:0]s_axi_araddr;
   wire [1:0]s_axi_arburst;
   wire [3:0]s_axi_arcache;
@@ -136,6 +137,8 @@ module design_1_wrapper
   wire [2:0]s_axi_arsize;
   wire s_axi_arvalid;
 
+  wire [daddr_width_p-1:0] s_axi_awaddr_addr;
+  wire [`BSG_SAFE_CLOG2(num_cce_p)-1:0] s_axi_awaddr_cache_id;
   wire [29:0]s_axi_awaddr;
   wire [1:0]s_axi_awburst;
   wire [3:0]s_axi_awcache;
@@ -332,7 +335,7 @@ bp_me_cce_to_mem_link_bidir
    );
 
   `declare_bsg_cache_wh_header_flit_s(mem_noc_flit_width_p, mem_noc_cord_width_p, mem_noc_len_width_p, mem_noc_cid_width_p);
-  `declare_bsg_cache_dma_pkt_s(caddr_width_p);
+  `declare_bsg_cache_dma_pkt_s(daddr_width_p);
   bsg_cache_dma_pkt_s [num_cce_p-1:0] dma_pkt_lo;
   logic [num_cce_p-1:0] dma_pkt_v_lo, dma_pkt_yumi_li;
   logic [num_cce_p-1:0][l2_fill_width_p-1:0] dma_data_lo;
@@ -352,7 +355,7 @@ bp_me_cce_to_mem_link_bidir
          ,.wh_cord_width_p(mem_noc_cord_width_p)
 
          ,.num_dma_p(cce_per_col_lp)
-         ,.dma_addr_width_p(caddr_width_p)
+         ,.dma_addr_width_p(daddr_width_p)
          ,.dma_burst_len_p(l2_block_size_in_fill_p)
          )
        wh_to_cache_dma
@@ -425,7 +428,7 @@ bp_me_cce_to_mem_link_bidir
   assign s_axi_awregion = '0;
 
   bsg_cache_to_axi 
- #(.addr_width_p         (caddr_width_p)
+ #(.addr_width_p         (daddr_width_p)
   ,.block_size_in_words_p(l2_block_size_in_fill_p)
   ,.data_width_p         (l2_fill_width_p)
   ,.num_cache_p          (num_cce_p)
@@ -490,8 +493,22 @@ bp_me_cce_to_mem_link_bidir
   ,.axi_rvalid_i    (s_axi_rvalid)
   ,.axi_rready_o    (s_axi_rready)
   );
-  assign s_axi_awaddr = s_axi_awaddr_addr;// - dram_base_addr_gp;
-  assign s_axi_araddr = s_axi_araddr_addr;// - dram_base_addr_gp;
+  localparam block_offset_lp = `BSG_SAFE_CLOG2(cce_block_width_p/8);
+  localparam lg_lce_sets_lp = `BSG_SAFE_CLOG2(lce_sets_p);
+  localparam lg_num_cce_lp = `BSG_SAFE_CLOG2(num_cce_p);
+  // To reconstruct addresses exactly, this code should be kept in sync with bp_me/src/v/dev/bp_me_cce_to_cache
+  assign s_axi_awaddr = 
+    {s_axi_awaddr_addr[daddr_width_p-1:block_offset_lp+lg_lce_sets_lp]
+     ,s_axi_awaddr_addr[block_offset_lp+lg_num_cce_lp-1:block_offset_lp]
+     ,s_axi_awaddr_addr[block_offset_lp+lg_lce_sets_lp-1:block_offset_lp+lg_num_cce_lp]
+     ,s_axi_awaddr_addr[block_offset_lp-1:0]
+     } ^ dram_base_addr_gp;
+  assign s_axi_araddr =
+    {s_axi_araddr_addr[daddr_width_p-1:block_offset_lp+lg_lce_sets_lp]
+     ,s_axi_araddr_addr[block_offset_lp+lg_num_cce_lp-1:block_offset_lp]
+     ,s_axi_araddr_addr[block_offset_lp+lg_lce_sets_lp-1:block_offset_lp+lg_num_cce_lp]
+     ,s_axi_araddr_addr[block_offset_lp-1:0]
+     } ^ dram_base_addr_gp;
   
   // LED breathing
   logic led_breath;

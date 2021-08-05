@@ -13,7 +13,7 @@ endif
 
 rtl_dir := $(THIS_DIR)/rtl
 rtl_url := $(GITHUB)black-parrot/black-parrot
-rtl_commit :=4d15d33
+rtl_commit :=9781274
 
 sdk_dir := $(THIS_DIR)/sdk
 sdk_url := $(GITHUB)black-parrot-sdk/black-parrot-sdk
