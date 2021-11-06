@@ -11,7 +11,7 @@ module bp_stream_host
   
  #(parameter bp_params_e bp_params_p = e_bp_default_cfg
   `declare_bp_proc_params(bp_params_p)
-  `declare_bp_bedrock_mem_if_widths(paddr_width_p, cce_block_width_p, lce_id_width_p, lce_assoc_p, cce)
+  `declare_bp_bedrock_mem_if_widths(paddr_width_p, did_width_p, lce_id_width_p, lce_assoc_p, cce)
   
   ,parameter stream_addr_width_p = 32
   ,parameter stream_data_width_p = 32
@@ -24,19 +24,23 @@ module bp_stream_host
   ,input                                        reset_i
   ,output                                       prog_done_o
 
-  ,input  [cce_mem_msg_width_lp-1:0]            io_cmd_i
+  ,input  [cce_mem_header_width_lp-1:0]         io_cmd_header_i
+  ,input [cce_block_width_p-1:0]                io_cmd_data_i
   ,input                                        io_cmd_v_i
   ,output                                       io_cmd_ready_o
 
-  ,output [cce_mem_msg_width_lp-1:0]            io_resp_o
+  ,output [cce_mem_header_width_lp-1:0]         io_resp_header_o
+  ,output [cce_block_width_p-1:0]               io_resp_data_o
   ,output                                       io_resp_v_o
   ,input                                        io_resp_yumi_i
   
-  ,output [cce_mem_msg_width_lp-1:0]            io_cmd_o
+  ,output [cce_mem_header_width_lp-1:0]         io_cmd_header_o
+  ,output [cce_block_width_p-1:0]               io_cmd_data_o
   ,output                                       io_cmd_v_o
   ,input                                        io_cmd_yumi_i
   
-  ,input  [cce_mem_msg_width_lp-1:0]            io_resp_i
+  ,input  [cce_mem_header_width_lp-1:0]         io_resp_header_i
+  ,input [cce_block_width_p-1:0]                io_resp_data_i
   ,input                                        io_resp_v_i
   ,output                                       io_resp_ready_o
   
@@ -50,7 +54,7 @@ module bp_stream_host
   ,input                                        stream_ready_i
   );
   
-  `declare_bp_bedrock_mem_if(paddr_width_p, cce_block_width_p, lce_id_width_p, lce_assoc_p, cce);
+  `declare_bp_bedrock_mem_if(paddr_width_p, did_width_p, lce_id_width_p, lce_assoc_p, cce);
   
   // AXI-Lite address map
   //
@@ -75,11 +79,13 @@ module bp_stream_host
   ,.reset_i        (reset_i)
   ,.done_o         (prog_done_o)
 
-  ,.io_cmd_o       (io_cmd_o)
+  ,.io_cmd_header_o(io_cmd_header_o)
+  ,.io_cmd_data_o  (io_cmd_data_o)
   ,.io_cmd_v_o     (io_cmd_v_o)
   ,.io_cmd_yumi_i  (io_cmd_yumi_i)
 
-  ,.io_resp_i      (io_resp_i)
+  ,.io_resp_header_i(io_resp_header_i)
+  ,.io_resp_data_i (io_resp_data_i)
   ,.io_resp_v_i    (io_resp_v_i)
   ,.io_resp_ready_o(io_resp_ready_o)
 
@@ -96,11 +102,13 @@ module bp_stream_host
   (.clk_i           (clk_i)
   ,.reset_i         (reset_i)
 
-  ,.io_cmd_i        (io_cmd_i)
+  ,.io_cmd_header_i (io_cmd_header_i)
+  ,.io_cmd_data_i   (io_cmd_data_i)
   ,.io_cmd_v_i      (io_cmd_v_i)
   ,.io_cmd_ready_o  (io_cmd_ready_o)
 
-  ,.io_resp_o       (io_resp_o)
+  ,.io_resp_header_o(io_resp_header_o)
+  ,.io_resp_data_o  (io_resp_data_o)
   ,.io_resp_v_o     (io_resp_v_o)
   ,.io_resp_yumi_i  (io_resp_yumi_i)
 

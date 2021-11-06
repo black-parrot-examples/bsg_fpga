@@ -16,7 +16,7 @@ module bp_stream_mmio
 
  #(parameter bp_params_e bp_params_p = e_bp_default_cfg
   `declare_bp_proc_params(bp_params_p)
-  `declare_bp_bedrock_mem_if_widths(paddr_width_p, cce_block_width_p, lce_id_width_p, lce_assoc_p, cce)
+  `declare_bp_bedrock_mem_if_widths(paddr_width_p, did_width_p, lce_id_width_p, lce_assoc_p, cce)
   
   ,parameter stream_data_width_p = 32
   )
@@ -24,11 +24,13 @@ module bp_stream_mmio
   (input  clk_i
   ,input  reset_i
   
-  ,input  [cce_mem_msg_width_lp-1:0]        io_cmd_i
+  ,input  [cce_mem_header_width_lp-1:0]     io_cmd_header_i
+  ,input [cce_block_width_p-1:0]            io_cmd_data_i
   ,input                                    io_cmd_v_i
   ,output logic                             io_cmd_ready_o
   
-  ,output [cce_mem_msg_width_lp-1:0]        io_resp_o
+  ,output [cce_mem_header_width_lp-1:0]     io_resp_header_o
+  ,output [cce_block_width_p-1:0]           io_resp_data_o
   ,output                                   io_resp_v_o
   ,input                                    io_resp_yumi_i
   
@@ -41,22 +43,23 @@ module bp_stream_mmio
   ,input                                    stream_yumi_i
   );
 
-  `declare_bp_bedrock_mem_if(paddr_width_p, cce_block_width_p, lce_id_width_p, lce_assoc_p, cce);
+  `declare_bp_bedrock_mem_if(paddr_width_p, did_width_p, lce_id_width_p, lce_assoc_p, cce);
   
   // Temporarily support cce_data_size less than stream_data_width_p only
   // Temporarily support response of 64-bits data only
-  bp_bedrock_cce_mem_msg_s io_cmd, io_resp;
+  bp_bedrock_cce_mem_header_s io_cmd_header_li, io_resp_header_lo;
+  logic [cce_block_width_p-1:0] io_cmd_data_li, io_resp_data_lo;
   
   logic io_cmd_v_li, io_cmd_yumi_lo;
   bsg_two_fifo
- #(.width_p(cce_mem_msg_width_lp))
+ #(.width_p(cce_mem_header_width_lp+cce_block_width_p))
  cmd_fifo
   (.clk_i(clk_i)
    ,.reset_i(reset_i)
-   ,.data_i(io_cmd_i)
+   ,.data_i({io_cmd_data_i, io_cmd_header_i})
    ,.v_i(io_cmd_v_i)
    ,.ready_o(io_cmd_ready_o)
-   ,.data_o(io_cmd)
+   ,.data_o({io_cmd_data_li, io_cmd_header_li})
    ,.v_o(io_cmd_v_li)
    ,.yumi_i(io_cmd_yumi_lo)
    );
@@ -83,15 +86,15 @@ module bp_stream_mmio
   logic queue_fifo_v_lo, queue_fifo_yumi_li;
   
   bsg_fifo_1r1w_small
- #(.width_p(cce_mem_msg_width_lp - cce_block_width_p)
+ #(.width_p(cce_mem_header_width_lp)
   ,.els_p  (16)
   ) queue_fifo
   (.clk_i  (clk_i)
   ,.reset_i(reset_i)
-  ,.data_i (io_cmd.header)
+  ,.data_i (io_cmd_header_li)
   ,.v_i    (queue_fifo_v_li)
   ,.ready_o(queue_fifo_ready_lo)
-  ,.data_o (io_resp.header)
+  ,.data_o (io_resp_header_lo)
   ,.v_o    (queue_fifo_v_lo)
   ,.yumi_i (queue_fifo_yumi_li)
   );
@@ -114,14 +117,14 @@ module bp_stream_mmio
     io_cmd_yumi_lo = 1'b0;
     queue_fifo_v_li = 1'b0;
     out_fifo_v_li = 1'b0;
-    out_fifo_data_li = io_cmd.data;
+    out_fifo_data_li = io_cmd_data_li;
     
     if (state_r == 0)
       begin
         if (io_cmd_v_li & out_fifo_ready_lo & queue_fifo_ready_lo)
           begin
             out_fifo_v_li = 1'b1;
-            out_fifo_data_li = io_cmd.header.addr;
+            out_fifo_data_li = io_cmd_header_li.addr;
             state_n = 1;
           end
       end
@@ -141,14 +144,14 @@ module bp_stream_mmio
   logic io_resp_v_li, io_resp_ready_lo;
 
   bsg_two_fifo
- #(.width_p(cce_mem_msg_width_lp)
+ #(.width_p(cce_mem_header_width_lp+cce_block_width_p)
   ) resp_fifo
   (.clk_i  (clk_i)
   ,.reset_i(reset_i)
-  ,.data_i (io_resp)
+  ,.data_i ({io_resp_data_lo, io_resp_header_lo})
   ,.v_i    (io_resp_v_li)
   ,.ready_o(io_resp_ready_lo)
-  ,.data_o (io_resp_o)
+  ,.data_o ({io_resp_data_o, io_resp_header_o})
   ,.v_o    (io_resp_v_o)
   ,.yumi_i (io_resp_yumi_i)
   );
@@ -175,16 +178,16 @@ module bp_stream_mmio
     io_resp_v_li = 1'b0;
     queue_fifo_yumi_li = 1'b0;
     sipo_yumi_li = 1'b0;
-    io_resp.data = '0;
+    io_resp_data_lo = '0;
     if (queue_fifo_v_lo & io_resp_ready_lo)
       begin
-        case (io_resp.header.msg_type)
+        case (io_resp_header_lo.msg_type)
           e_bedrock_mem_rd
           ,e_bedrock_mem_uc_rd:
           begin
             if (sipo_v_lo)
               begin
-                io_resp.data = sipo_data_lo;
+                io_resp_data_lo = sipo_data_lo;
                 io_resp_v_li = 1'b1;
                 queue_fifo_yumi_li = 1'b1;
                 sipo_yumi_li = 1'b1;

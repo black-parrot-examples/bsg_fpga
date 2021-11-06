@@ -15,7 +15,7 @@ module bp_stream_nbf_loader
   
  #(parameter bp_params_e bp_params_p = e_bp_default_cfg
   `declare_bp_proc_params(bp_params_p)
-  `declare_bp_bedrock_mem_if_widths(paddr_width_p, cce_block_width_p, lce_id_width_p, lce_assoc_p, cce)
+  `declare_bp_bedrock_mem_if_widths(paddr_width_p, did_width_p, lce_id_width_p, lce_assoc_p, cce)
   
   ,parameter stream_data_width_p = 32
   ,parameter clear_freeze_p = 0
@@ -32,13 +32,15 @@ module bp_stream_nbf_loader
   ,input  reset_i
   ,output done_o
   
-  ,output [cce_mem_msg_width_lp-1:0]        io_cmd_o
-  ,output                                   io_cmd_v_o
+  ,output [cce_mem_header_width_lp-1:0]     io_cmd_header_o
+  ,output logic [cce_block_width_p-1:0]     io_cmd_data_o
+  ,output logic                             io_cmd_v_o
   ,input                                    io_cmd_yumi_i
   
-  ,input  [cce_mem_msg_width_lp-1:0]        io_resp_i
+  ,input  [cce_mem_header_width_lp-1:0]     io_resp_header_i
+  ,input [cce_block_width_p-1:0]            io_resp_data_i
   ,input                                    io_resp_v_i
-  ,output                                   io_resp_ready_o
+  ,output logic                             io_resp_ready_o
   
   ,input                                    stream_v_i
   ,input  [stream_data_width_p-1:0]         stream_data_i
@@ -46,7 +48,7 @@ module bp_stream_nbf_loader
   );
   
   // response network not used
-  wire unused_resp = &{io_resp_i, io_resp_v_i};
+  wire unused_resp = &{io_resp_header_i, io_resp_data_i, io_resp_v_i};
   assign io_resp_ready_o = 1'b1;
   
   // nbf credit counter
@@ -73,13 +75,8 @@ module bp_stream_nbf_loader
   } bp_nbf_s;
 
   // bp_cce packet
-  `declare_bp_bedrock_mem_if(paddr_width_p, cce_block_width_p, lce_id_width_p, lce_assoc_p, cce);
-  bp_bedrock_cce_mem_msg_s io_cmd, io_resp;
-  logic io_cmd_v_lo;
-  
-  assign io_cmd_o = io_cmd;
-  assign io_resp = io_resp_i;
-  assign io_cmd_v_o = io_cmd_v_lo;
+  `declare_bp_bedrock_mem_if(paddr_width_p, did_width_p, lce_id_width_p, lce_assoc_p, cce);
+  `bp_cast_o(bp_bedrock_cce_mem_header_s, io_cmd_header);
 
   // read nbf file
   logic incoming_nbf_v_lo, incoming_nbf_yumi_li;
@@ -120,10 +117,12 @@ module bp_stream_nbf_loader
   always_comb 
   begin
   
-    io_cmd.data = curr_nbf.data;
-    io_cmd.header.payload = '0;
-    io_cmd.header.addr = curr_nbf.addr;
-    io_cmd.header.msg_type = e_bedrock_mem_uc_wr;
+    io_cmd_data_o = curr_nbf.data;
+    // TODO: This is probably why unicore wasn't working
+    io_cmd_header_cast_o.payload = '0;
+    io_cmd_header_cast_o.payload.did = '1;
+    io_cmd_header_cast_o.addr = curr_nbf.addr;
+    io_cmd_header_cast_o.msg_type = e_bedrock_mem_uc_wr;
     
     freeze_addr.nonlocal = '0;
     freeze_addr.tile     = counter_r;
@@ -131,24 +130,24 @@ module bp_stream_nbf_loader
     freeze_addr.addr     = cfg_reg_freeze_gp;
     
     case (curr_nbf.opcode)
-      2: io_cmd.header.size = e_bedrock_msg_size_4;
-      3: io_cmd.header.size = e_bedrock_msg_size_8;
-      default: io_cmd.header.size = e_bedrock_msg_size_4;
+      2: io_cmd_header_cast_o.size = e_bedrock_msg_size_4;
+      3: io_cmd_header_cast_o.size = e_bedrock_msg_size_8;
+      default: io_cmd_header_cast_o.size = e_bedrock_msg_size_4;
     endcase
   
     state_n = state_r;
     counter_n = counter_r;
-    io_cmd_v_lo = 1'b0;
+    io_cmd_v_o = 1'b0;
     incoming_nbf_yumi_li = 1'b0;
     
     if (state_r == 0)
       begin
         if (~reset_i)
           begin
-            io_cmd_v_lo = ~credits_full_lo;
-            io_cmd.data = '0;
-            io_cmd.header.addr = counter_r;
-            io_cmd.header.size = e_bedrock_msg_size_8;
+            io_cmd_v_o = ~credits_full_lo;
+            io_cmd_data_o = '0;
+            io_cmd_header_cast_o.addr = counter_r;
+            io_cmd_header_cast_o.size = e_bedrock_msg_size_8;
             if (io_cmd_yumi_i)
               begin
                 counter_n = counter_r + 32'h8;
@@ -164,15 +163,15 @@ module bp_stream_nbf_loader
       begin
         if (incoming_nbf_v_lo) 
           begin
-            io_cmd_v_lo = ~credits_full_lo;
+            io_cmd_v_o = ~credits_full_lo;
             incoming_nbf_yumi_li = io_cmd_yumi_i;
             if (curr_nbf.opcode == 8'hFF)
               begin
                 if (clear_freeze_p == 0)
                   begin
-                    io_cmd.header.addr = 32'h00000000;
-                    io_cmd.header.size = e_bedrock_msg_size_8;
-                    io_cmd.data = '0;
+                    io_cmd_header_cast_o.addr = 32'h00000000;
+                    io_cmd_header_cast_o.size = e_bedrock_msg_size_8;
+                    io_cmd_data_o = '0;
                     if (io_cmd_yumi_i)
                       begin
                         state_n = 3;
@@ -180,7 +179,7 @@ module bp_stream_nbf_loader
                   end
                 else
                   begin
-                    io_cmd_v_lo = 1'b0;
+                    io_cmd_v_o = 1'b0;
                     incoming_nbf_yumi_li = 1'b0;
                     state_n = 2;
                   end
@@ -189,10 +188,10 @@ module bp_stream_nbf_loader
       end
     else if (state_r == 2)
       begin
-        io_cmd_v_lo = ~credits_full_lo;
-        io_cmd.data = '0;
-        io_cmd.header.addr = freeze_addr;
-        io_cmd.header.size = e_bedrock_msg_size_8;
+        io_cmd_v_o = ~credits_full_lo;
+        io_cmd_data_o = '0;
+        io_cmd_header_cast_o.addr = freeze_addr;
+        io_cmd_header_cast_o.size = e_bedrock_msg_size_8;
         if (io_cmd_yumi_i)
           begin
             counter_n = counter_r + 32'd1;

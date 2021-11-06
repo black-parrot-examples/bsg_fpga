@@ -26,7 +26,7 @@ module design_1_wrapper
 
  #(parameter bp_params_e bp_params_p = e_bp_multicore_1_cfg
    `declare_bp_proc_params(bp_params_p)
-   `declare_bp_bedrock_mem_if_widths(paddr_width_p, cce_block_width_p, lce_id_width_p, lce_assoc_p, cce)
+   `declare_bp_bedrock_mem_if_widths(paddr_width_p, did_width_p, lce_id_width_p, lce_assoc_p, cce)
    
   ,parameter load_nbf_p = 1
    
@@ -238,31 +238,32 @@ module design_1_wrapper
   
 `declare_bsg_ready_and_link_sif_s(io_noc_flit_width_p, bp_io_noc_ral_link_s);
 `declare_bsg_ready_and_link_sif_s(mem_noc_flit_width_p, bp_mem_noc_ral_link_s);
-`declare_bp_bedrock_mem_if(paddr_width_p, cce_block_width_p, lce_id_width_p, lce_assoc_p, cce)
+`declare_bp_bedrock_mem_if(paddr_width_p, did_width_p, lce_id_width_p, lce_assoc_p, cce)
 
 bp_io_noc_ral_link_s proc_cmd_link_li, proc_cmd_link_lo;
 bp_io_noc_ral_link_s proc_resp_link_li, proc_resp_link_lo;
 bp_mem_noc_ral_link_s [mc_x_dim_p-1:0] dram_cmd_link_lo, dram_resp_link_li;
 
-bp_bedrock_cce_mem_msg_s       host_cmd_li;
-logic                  host_cmd_v_li, host_cmd_ready_lo;
-bp_bedrock_cce_mem_msg_s       host_resp_lo;
-logic                  host_resp_v_lo, host_resp_ready_li;
+bp_bedrock_cce_mem_header_s host_cmd_header_li;
+logic [cce_block_width_p-1:0] host_cmd_data_li;
+logic host_cmd_v_li, host_cmd_ready_lo;
+bp_bedrock_cce_mem_header_s host_resp_header_lo;
+logic [cce_block_width_p-1:0] host_resp_data_lo;
+logic host_resp_v_lo, host_resp_ready_li;
 
-bp_bedrock_cce_mem_msg_s       load_cmd_lo;
-logic                  load_cmd_v_lo, load_cmd_ready_li;
-bp_bedrock_cce_mem_msg_s       load_resp_li;
-logic                  load_resp_v_li, load_resp_yumi_lo;
-
-bp_bedrock_cce_mem_msg_s       nbf_cmd_lo;
-logic                  nbf_cmd_v_lo, nbf_cmd_ready_li;
-bp_bedrock_cce_mem_msg_s       nbf_resp_li;
-logic                  nbf_resp_v_li, nbf_resp_ready_lo;
+bp_bedrock_cce_mem_header_s nbf_cmd_header_lo;
+logic [cce_block_width_p-1:0] nbf_cmd_data_lo;
+logic nbf_cmd_v_lo, nbf_cmd_ready_li;
+bp_bedrock_cce_mem_header_s nbf_resp_header_li;
+logic [cce_block_width_p-1:0] nbf_resp_data_li;
+logic nbf_resp_v_li, nbf_resp_ready_lo;
 
 wire [io_noc_did_width_p-1:0] dram_did_li = '1;
 wire [io_noc_did_width_p-1:0] proc_did_li = 1;
 
 bp_io_noc_ral_link_s stub_cmd_link, stub_resp_link;
+bp_io_noc_ral_link_s send_cmd_link_lo, send_resp_link_li;
+bp_io_noc_ral_link_s recv_cmd_link_li, recv_resp_link_lo;
 
 // Chip
 bp_multicore
@@ -293,45 +294,85 @@ bp_multicore
    ,.dram_resp_link_i(dram_resp_link_li)
    );
 
-wire [io_noc_cord_width_p-1:0] dst_cord_lo = 1;
+assign recv_cmd_link_li = '{data          : proc_cmd_link_lo.data
+                            ,v            : proc_cmd_link_lo.v
+                            ,ready_and_rev: proc_resp_link_lo.ready_and_rev
+                            };
 
-bp_me_cce_to_mem_link_bidir
+assign proc_cmd_link_li = '{data           : send_cmd_link_lo.data
+                            ,v             : send_cmd_link_lo.v
+                            ,ready_and_rev : recv_resp_link_lo.ready_and_rev
+                            };
+
+assign send_resp_link_li = '{data          : proc_resp_link_lo.data
+                             ,v            : proc_resp_link_lo.v
+                             ,ready_and_rev: proc_cmd_link_lo.ready_and_rev
+                             };
+
+assign proc_resp_link_li = '{data           : recv_resp_link_lo.data
+                             ,v             : recv_resp_link_lo.v
+                             ,ready_and_rev : send_cmd_link_lo.ready_and_rev
+                             };
+
+
+bp_me_cce_to_mem_link_send
  #(.bp_params_p(bp_params_p)
-   ,.num_outstanding_req_p(io_noc_max_credits_p)
    ,.flit_width_p(io_noc_flit_width_p)
    ,.cord_width_p(io_noc_cord_width_p)
    ,.cid_width_p(io_noc_cid_width_p)
    ,.len_width_p(io_noc_len_width_p)
    )
- host_link
+ host_link_send
   (.clk_i(mig_clk)
    ,.reset_i(mig_reset)
 
-   ,.mem_cmd_i(nbf_cmd_lo)
+   ,.mem_cmd_header_i(nbf_cmd_header_lo)
+   ,.mem_cmd_data_i(nbf_cmd_data_lo)
    ,.mem_cmd_v_i(nbf_cmd_v_lo)
+   ,.mem_cmd_last_i(nbf_cmd_v_lo)
    ,.mem_cmd_ready_and_o(nbf_cmd_ready_li)
 
-   ,.mem_resp_o(nbf_resp_li)
+   ,.mem_resp_header_o(nbf_resp_header_li)
+   ,.mem_resp_data_o(nbf_resp_data_li)
    ,.mem_resp_v_o(nbf_resp_v_li)
+   ,.mem_resp_last_o()
    ,.mem_resp_yumi_i(nbf_resp_ready_lo & nbf_resp_v_li)
 
-   ,.my_cord_i(io_noc_cord_width_p'(dram_did_li))
-   ,.my_cid_i('0)
-   ,.dst_cord_i(dst_cord_lo)
+   ,.dst_cord_i(proc_did_li)
    ,.dst_cid_i('0)
 
-   ,.mem_cmd_o(host_cmd_li)
+   ,.cmd_link_o(send_cmd_link_lo)
+   ,.resp_link_i(send_resp_link_li)
+   );
+
+bp_me_cce_to_mem_link_recv
+ #(.bp_params_p(bp_params_p)
+   ,.flit_width_p(io_noc_flit_width_p)
+   ,.cord_width_p(io_noc_cord_width_p)
+   ,.cid_width_p(io_noc_cid_width_p)
+   ,.len_width_p(io_noc_len_width_p)
+   )
+ host_link_recv
+  (.clk_i(mig_clk)
+   ,.reset_i(mig_reset)
+
+   ,.dst_cord_i(host_resp_header_lo.payload.did)
+   ,.dst_cid_i('0)
+
+   ,.mem_cmd_header_o(host_cmd_header_li)
+   ,.mem_cmd_data_o(host_cmd_data_li)
    ,.mem_cmd_v_o(host_cmd_v_li)
+   ,.mem_cmd_last_o()
    ,.mem_cmd_yumi_i(host_cmd_ready_lo & host_cmd_v_li)
 
-   ,.mem_resp_i(host_resp_lo)
+   ,.mem_resp_header_i(host_resp_header_lo)
+   ,.mem_resp_data_i(host_resp_data_lo)
    ,.mem_resp_v_i(host_resp_v_lo)
+   ,.mem_resp_last_i(host_resp_v_lo)
    ,.mem_resp_ready_and_o(host_resp_ready_li)
 
-   ,.cmd_link_i(proc_cmd_link_lo)
-   ,.cmd_link_o(proc_cmd_link_li)
-   ,.resp_link_i(proc_resp_link_lo)
-   ,.resp_link_o(proc_resp_link_li)
+   ,.cmd_link_i(recv_cmd_link_li)
+   ,.resp_link_o(recv_resp_link_lo)
    );
 
   `declare_bsg_cache_wh_header_flit_s(mem_noc_flit_width_p, mem_noc_cord_width_p, mem_noc_len_width_p, mem_noc_cid_width_p);
@@ -394,19 +435,23 @@ bp_me_cce_to_mem_link_bidir
   ,.reset_i        (mig_reset)
   ,.prog_done_o    (nbf_done_lo)
   
-  ,.io_cmd_i       (host_cmd_li)
+  ,.io_cmd_header_i(host_cmd_header_li)
+  ,.io_cmd_data_i  (host_cmd_data_li)
   ,.io_cmd_v_i     (host_cmd_v_li)
   ,.io_cmd_ready_o (host_cmd_ready_lo)
 
-  ,.io_resp_o      (host_resp_lo)
+  ,.io_resp_header_o(host_resp_header_lo)
+  ,.io_resp_data_o (host_resp_data_lo)
   ,.io_resp_v_o    (host_resp_v_lo)
   ,.io_resp_yumi_i (host_resp_ready_li & host_resp_v_lo)
 
-  ,.io_cmd_o       (nbf_cmd_lo)
+  ,.io_cmd_header_o(nbf_cmd_header_lo)
+  ,.io_cmd_data_o  (nbf_cmd_data_lo)
   ,.io_cmd_v_o     (nbf_cmd_v_lo)
   ,.io_cmd_yumi_i  (nbf_cmd_ready_li & nbf_cmd_v_lo)
 
-  ,.io_resp_i      (nbf_resp_li)
+  ,.io_resp_header_i(nbf_resp_header_li)
+  ,.io_resp_data_i(nbf_resp_data_li)
   ,.io_resp_v_i    (nbf_resp_v_li)
   ,.io_resp_ready_o(nbf_resp_ready_lo)
 
