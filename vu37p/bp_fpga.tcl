@@ -57,7 +57,7 @@
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/rtl/bp_be/src/v/bp_be_dcache/bp_be_dcache_wbuf.sv"
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/rtl/bp_be/src/v/bp_be_checker/bp_be_detector.sv"
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/rtl/bp_be/src/v/bp_be_checker/bp_be_director.sv"
-#    "/home/petrisko/scratch/bsg_fpga/vu37p/rtl/bp_be/src/v/bp_be_calculator/bp_be_fp_to_rec.sv"
+#    "/home/petrisko/scratch/bsg_fpga/vu37p/rtl/bp_be/src/v/bp_be_calculator/bp_be_fp_to_reg.sv"
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/rtl/bp_be/src/v/bp_be_checker/bp_be_instr_decoder.sv"
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/rtl/bp_be/src/v/bp_be_calculator/bp_be_pipe_aux.sv"
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/rtl/bp_be/src/v/bp_be_calculator/bp_be_pipe_ctl.sv"
@@ -67,7 +67,7 @@
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/rtl/bp_be/src/v/bp_be_calculator/bp_be_pipe_mem.sv"
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/rtl/bp_be/src/v/bp_be_calculator/bp_be_pipe_sys.sv"
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/rtl/bp_be/src/v/bp_be_calculator/bp_be_ptw.sv"
-#    "/home/petrisko/scratch/bsg_fpga/vu37p/rtl/bp_be/src/v/bp_be_calculator/bp_be_rec_to_fp.sv"
+#    "/home/petrisko/scratch/bsg_fpga/vu37p/rtl/bp_be/src/v/bp_be_calculator/bp_be_reg_to_fp.sv"
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/rtl/bp_be/src/v/bp_be_checker/bp_be_regfile.sv"
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/rtl/bp_be/src/v/bp_be_checker/bp_be_scheduler.sv"
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/rtl/bp_be/src/v/bp_be_top.sv"
@@ -412,7 +412,7 @@ set files [list \
  [file normalize "${origin_dir}/rtl/bp_be/src/v/bp_be_checker/bp_be_detector.sv"] \
  [file normalize "${origin_dir}/rtl/bp_be/src/v/bp_be_checker/bp_be_scoreboard.sv"] \
  [file normalize "${origin_dir}/rtl/bp_be/src/v/bp_be_checker/bp_be_director.sv"] \
- [file normalize "${origin_dir}/rtl/bp_be/src/v/bp_be_calculator/bp_be_fp_to_rec.sv"] \
+ [file normalize "${origin_dir}/rtl/bp_be/src/v/bp_be_calculator/bp_be_fp_to_reg.sv"] \
  [file normalize "${origin_dir}/rtl/bp_be/src/v/bp_be_checker/bp_be_instr_decoder.sv"] \
  [file normalize "${origin_dir}/rtl/bp_be/src/v/bp_be_calculator/bp_be_pipe_aux.sv"] \
  [file normalize "${origin_dir}/rtl/bp_be/src/v/bp_be_calculator/bp_be_pipe_ctl.sv"] \
@@ -422,7 +422,7 @@ set files [list \
  [file normalize "${origin_dir}/rtl/bp_be/src/v/bp_be_calculator/bp_be_pipe_mem.sv"] \
  [file normalize "${origin_dir}/rtl/bp_be/src/v/bp_be_calculator/bp_be_pipe_sys.sv"] \
  [file normalize "${origin_dir}/rtl/bp_be/src/v/bp_be_calculator/bp_be_ptw.sv"] \
- [file normalize "${origin_dir}/rtl/bp_be/src/v/bp_be_calculator/bp_be_rec_to_fp.sv"] \
+ [file normalize "${origin_dir}/rtl/bp_be/src/v/bp_be_calculator/bp_be_reg_to_fp.sv"] \
  [file normalize "${origin_dir}/rtl/bp_be/src/v/bp_be_checker/bp_be_regfile.sv"] \
  [file normalize "${origin_dir}/rtl/bp_be/src/v/bp_be_checker/bp_be_scheduler.sv"] \
  [file normalize "${origin_dir}/rtl/bp_be/src/v/bp_be_checker/bp_be_issue_queue.sv"] \
@@ -553,6 +553,7 @@ set files [list \
  [file normalize "${origin_dir}/rtl/external/basejump_stl/bsg_misc/bsg_circular_ptr.v"] \
  [file normalize "${origin_dir}/rtl/external/basejump_stl/bsg_misc/bsg_clkgate_optional.v"] \
  [file normalize "${origin_dir}/rtl/external/basejump_stl/bsg_misc/bsg_concentrate_static.v"] \
+ [file normalize "${origin_dir}/rtl/external/basejump_stl/bsg_misc/bsg_counting_leading_zeros.v"] \
  [file normalize "${origin_dir}/rtl/external/basejump_stl/bsg_misc/bsg_counter_clear_up.v"] \
  [file normalize "${origin_dir}/rtl/external/basejump_stl/bsg_misc/bsg_counter_clear_up_one_hot.v"] \
  [file normalize "${origin_dir}/rtl/external/basejump_stl/bsg_misc/bsg_counter_set_down.v"] \
@@ -779,7 +780,7 @@ set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
 
-set file "$origin_dir/rtl/bp_be/src/v/bp_be_calculator/bp_be_fp_to_rec.sv"
+set file "$origin_dir/rtl/bp_be/src/v/bp_be_calculator/bp_be_fp_to_reg.sv"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
@@ -829,7 +830,7 @@ set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
 
-set file "$origin_dir/rtl/bp_be/src/v/bp_be_calculator/bp_be_rec_to_fp.sv"
+set file "$origin_dir/rtl/bp_be/src/v/bp_be_calculator/bp_be_reg_to_fp.sv"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
@@ -1481,6 +1482,11 @@ set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
 
 set file "$origin_dir/rtl/external/basejump_stl/bsg_misc/bsg_concentrate_static.v"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
+
+set file "$origin_dir/rtl/external/basejump_stl/bsg_misc/bsg_counting_leading_zeros.v"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
