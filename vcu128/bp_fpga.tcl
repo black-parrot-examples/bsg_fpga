@@ -584,9 +584,9 @@ proc cr_bd_design_1 { parentCell } {
    CONFIG.USER_MC9_MAINTAIN_COHERENCY {false} \
    CONFIG.USER_MC9_REORDER_EN {false} \
    CONFIG.USER_MC9_REORDER_QUEUE_EN {false} \
-   CONFIG.USER_MC_ENABLE_01 {FALSE} \
-   CONFIG.USER_MC_ENABLE_02 {FALSE} \
-   CONFIG.USER_MC_ENABLE_03 {FALSE} \
+   CONFIG.USER_MC_ENABLE_01 {TRUE} \
+   CONFIG.USER_MC_ENABLE_02 {TRUE} \
+   CONFIG.USER_MC_ENABLE_03 {TRUE} \
    CONFIG.USER_MC_ENABLE_04 {FALSE} \
    CONFIG.USER_MC_ENABLE_05 {FALSE} \
    CONFIG.USER_MC_ENABLE_06 {FALSE} \
@@ -600,7 +600,7 @@ proc cr_bd_design_1 { parentCell } {
    CONFIG.USER_MC_ENABLE_14 {FALSE} \
    CONFIG.USER_MC_ENABLE_15 {FALSE} \
    CONFIG.USER_MC_ENABLE_APB_01 {FALSE} \
-   CONFIG.USER_MEMORY_DISPLAY {512} \
+   CONFIG.USER_MEMORY_DISPLAY {2048} \
    CONFIG.USER_PHY_ENABLE_08 {FALSE} \
    CONFIG.USER_PHY_ENABLE_09 {FALSE} \
    CONFIG.USER_PHY_ENABLE_10 {FALSE} \
@@ -625,8 +625,8 @@ proc cr_bd_design_1 { parentCell } {
    CONFIG.USER_SAXI_13 {false} \
    CONFIG.USER_SAXI_14 {false} \
    CONFIG.USER_SAXI_15 {false} \
-   CONFIG.USER_SINGLE_STACK_SELECTION {RIGHT} \
-   CONFIG.USER_SWITCH_ENABLE_00 {FALSE} \
+   CONFIG.USER_SINGLE_STACK_SELECTION {LEFT} \
+   CONFIG.USER_SWITCH_ENABLE_00 {TRUE} \
    CONFIG.USER_SWITCH_ENABLE_01 {FALSE} \
    CONFIG.USER_TEMP_POLL_CNT_0 {100000} \
  ] $hbm_0
@@ -755,6 +755,12 @@ connect_bd_intf_net -intf_net [get_bd_intf_nets s_axi_1] [get_bd_intf_ports s_ax
   create_bd_addr_seg -range 0x00010000 -offset 0x44A00000 [get_bd_addr_spaces xdma_0/M_AXI_LITE] [get_bd_addr_segs m_axi_lite/Reg] SEG_m_axi_lite_Reg
   create_bd_addr_seg -range 0x10000000 -offset 0x00000000 [get_bd_addr_spaces s_axi] [get_bd_addr_segs hbm_0/SAXI_00/HBM_MEM00] SEG_hbm_0_HBM_MEM00
   create_bd_addr_seg -range 0x10000000 -offset 0x10000000 [get_bd_addr_spaces s_axi] [get_bd_addr_segs hbm_0/SAXI_00/HBM_MEM01] SEG_hbm_0_HBM_MEM01
+  create_bd_addr_seg -range 0x10000000 -offset 0x20000000 [get_bd_addr_spaces s_axi] [get_bd_addr_segs hbm_0/SAXI_00/HBM_MEM02] SEG_hbm_0_HBM_MEM02
+  create_bd_addr_seg -range 0x10000000 -offset 0x30000000 [get_bd_addr_spaces s_axi] [get_bd_addr_segs hbm_0/SAXI_00/HBM_MEM03] SEG_hbm_0_HBM_MEM03
+  create_bd_addr_seg -range 0x10000000 -offset 0x40000000 [get_bd_addr_spaces s_axi] [get_bd_addr_segs hbm_0/SAXI_00/HBM_MEM04] SEG_hbm_0_HBM_MEM04
+  create_bd_addr_seg -range 0x10000000 -offset 0x50000000 [get_bd_addr_spaces s_axi] [get_bd_addr_segs hbm_0/SAXI_00/HBM_MEM05] SEG_hbm_0_HBM_MEM05
+  create_bd_addr_seg -range 0x10000000 -offset 0x60000000 [get_bd_addr_spaces s_axi] [get_bd_addr_segs hbm_0/SAXI_00/HBM_MEM06] SEG_hbm_0_HBM_MEM06
+  create_bd_addr_seg -range 0x10000000 -offset 0x70000000 [get_bd_addr_spaces s_axi] [get_bd_addr_segs hbm_0/SAXI_00/HBM_MEM07] SEG_hbm_0_HBM_MEM07
   create_bd_addr_seg -range 0x00400000 -offset 0x00000000 [get_bd_addr_spaces s_apb] [get_bd_addr_segs hbm_0/SAPB_0/Reg] SEG_hbm_0_Reg
 
   # Restore current instance
