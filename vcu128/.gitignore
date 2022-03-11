@@ -1,0 +1,12 @@
+/rtl*
+/sdk*
+/tools*
+/vcu128_*/
+/logs*
+last_programmed.txt
+*.bit
+*.ltx
+vivado*
+hs_err*
+webtalk*
+.Xil

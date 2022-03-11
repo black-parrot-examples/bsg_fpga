@@ -1,0 +1,34 @@
+
+/* Prerequisite */
+1. Vivado 2019.1 installed, source <dir_to_vivado>/bin/settings64.sh
+2. Support C++14: scl enable devtoolset-7 bash
+
+/* first time setup */
+    make prep -j <N>
+    make build
+
+/* generate bitstream */
+option 1:
+    make generate_bitstream
+option 2 (when debugging):
+    make open
+    click on generate bitstream button
+
+/* program FPGA */
+    make program_fpga
+
+/* update project tcl (when project filelist updated) */
+    make update_tcl
+
+/* clean project */
+    make clean_libs
+    make clean_build
+
+
+/* Switching between single-core and dual-core settings */
+
+In v/design_1_wrapper.v:
+
+Single Core: parameter bp_params_e bp_params_p = e_bp_multicore_1_cfg
+Dual Core: parameter bp_params_e bp_params_p = e_bp_multicore_2_cfg
+
