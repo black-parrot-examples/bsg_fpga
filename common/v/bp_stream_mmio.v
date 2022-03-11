@@ -16,7 +16,7 @@ module bp_stream_mmio
 
  #(parameter bp_params_e bp_params_p = e_bp_default_cfg
   `declare_bp_proc_params(bp_params_p)
-  `declare_bp_bedrock_mem_if_widths(paddr_width_p, did_width_p, lce_id_width_p, lce_assoc_p, cce)
+  `declare_bp_bedrock_mem_if_widths(paddr_width_p, did_width_p, lce_id_width_p, lce_assoc_p)
   
   ,parameter stream_data_width_p = 32
   )
@@ -24,12 +24,12 @@ module bp_stream_mmio
   (input  clk_i
   ,input  reset_i
   
-  ,input  [cce_mem_header_width_lp-1:0]     io_cmd_header_i
+  ,input  [mem_header_width_lp-1:0]         io_cmd_header_i
   ,input [cce_block_width_p-1:0]            io_cmd_data_i
   ,input                                    io_cmd_v_i
   ,output logic                             io_cmd_ready_o
   
-  ,output [cce_mem_header_width_lp-1:0]     io_resp_header_o
+  ,output [mem_header_width_lp-1:0]         io_resp_header_o
   ,output [cce_block_width_p-1:0]           io_resp_data_o
   ,output                                   io_resp_v_o
   ,input                                    io_resp_yumi_i
@@ -43,16 +43,16 @@ module bp_stream_mmio
   ,input                                    stream_yumi_i
   );
 
-  `declare_bp_bedrock_mem_if(paddr_width_p, did_width_p, lce_id_width_p, lce_assoc_p, cce);
+  `declare_bp_bedrock_mem_if(paddr_width_p, did_width_p, lce_id_width_p, lce_assoc_p);
   
   // Temporarily support cce_data_size less than stream_data_width_p only
   // Temporarily support response of 64-bits data only
-  bp_bedrock_cce_mem_header_s io_cmd_header_li, io_resp_header_lo;
+  bp_bedrock_mem_header_s io_cmd_header_li, io_resp_header_lo;
   logic [cce_block_width_p-1:0] io_cmd_data_li, io_resp_data_lo;
   
   logic io_cmd_v_li, io_cmd_yumi_lo;
   bsg_two_fifo
- #(.width_p(cce_mem_header_width_lp+cce_block_width_p))
+ #(.width_p(mem_header_width_lp+cce_block_width_p))
  cmd_fifo
   (.clk_i(clk_i)
    ,.reset_i(reset_i)
@@ -86,7 +86,7 @@ module bp_stream_mmio
   logic queue_fifo_v_lo, queue_fifo_yumi_li;
   
   bsg_fifo_1r1w_small
- #(.width_p(cce_mem_header_width_lp)
+ #(.width_p(mem_header_width_lp)
   ,.els_p  (16)
   ) queue_fifo
   (.clk_i  (clk_i)
@@ -144,7 +144,7 @@ module bp_stream_mmio
   logic io_resp_v_li, io_resp_ready_lo;
 
   bsg_two_fifo
- #(.width_p(cce_mem_header_width_lp+cce_block_width_p)
+ #(.width_p(mem_header_width_lp+cce_block_width_p)
   ) resp_fifo
   (.clk_i  (clk_i)
   ,.reset_i(reset_i)

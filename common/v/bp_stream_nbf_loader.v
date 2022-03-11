@@ -15,7 +15,7 @@ module bp_stream_nbf_loader
   
  #(parameter bp_params_e bp_params_p = e_bp_default_cfg
   `declare_bp_proc_params(bp_params_p)
-  `declare_bp_bedrock_mem_if_widths(paddr_width_p, did_width_p, lce_id_width_p, lce_assoc_p, cce)
+  `declare_bp_bedrock_mem_if_widths(paddr_width_p, did_width_p, lce_id_width_p, lce_assoc_p)
   
   ,parameter stream_data_width_p = 32
   ,parameter clear_freeze_p = 0
@@ -32,12 +32,12 @@ module bp_stream_nbf_loader
   ,input  reset_i
   ,output done_o
   
-  ,output [cce_mem_header_width_lp-1:0]     io_cmd_header_o
+  ,output [mem_header_width_lp-1:0]         io_cmd_header_o
   ,output logic [cce_block_width_p-1:0]     io_cmd_data_o
   ,output logic                             io_cmd_v_o
   ,input                                    io_cmd_yumi_i
   
-  ,input  [cce_mem_header_width_lp-1:0]     io_resp_header_i
+  ,input  [mem_header_width_lp-1:0]         io_resp_header_i
   ,input [cce_block_width_p-1:0]            io_resp_data_i
   ,input                                    io_resp_v_i
   ,output logic                             io_resp_ready_o
@@ -75,8 +75,8 @@ module bp_stream_nbf_loader
   } bp_nbf_s;
 
   // bp_cce packet
-  `declare_bp_bedrock_mem_if(paddr_width_p, did_width_p, lce_id_width_p, lce_assoc_p, cce);
-  `bp_cast_o(bp_bedrock_cce_mem_header_s, io_cmd_header);
+  `declare_bp_bedrock_mem_if(paddr_width_p, did_width_p, lce_id_width_p, lce_assoc_p);
+  `bp_cast_o(bp_bedrock_mem_header_s, io_cmd_header);
 
   // read nbf file
   logic incoming_nbf_v_lo, incoming_nbf_yumi_li;
@@ -99,12 +99,6 @@ module bp_stream_nbf_loader
   bp_nbf_s curr_nbf;
   assign curr_nbf = nbf_width_lp'(incoming_nbf);
   
-  // assemble cce cmd packet
-  always_comb
-  begin
-
-  end
-  
   logic [31:0] counter_r, counter_n;
   logic [1:0] state_r, state_n;
   
@@ -113,16 +107,27 @@ module bp_stream_nbf_loader
   `declare_bp_memory_map(paddr_width_p, caddr_width_p);
   bp_local_addr_s freeze_addr;
  
+  localparam sel_width_lp = `BSG_SAFE_CLOG2(nbf_data_width_p>>3);
+  localparam size_width_lp = `BSG_SAFE_CLOG2(sel_width_lp);
+  bsg_bus_pack
+   #(.in_width_p(nbf_data_width_p), .out_width_p(cce_block_width_p))
+   cmd_bus_pack
+    (.data_i(curr_nbf.data)
+     ,.sel_i('0) // We are aligned
+     ,.size_i(io_cmd_header_cast_o.size[0+:size_width_lp])
+     ,.data_o(io_cmd_data_o)
+     );
+
  // combinational
   always_comb 
   begin
   
-    io_cmd_data_o = curr_nbf.data;
     // TODO: This is probably why unicore wasn't working
     io_cmd_header_cast_o.payload = '0;
     io_cmd_header_cast_o.payload.did = '1;
     io_cmd_header_cast_o.addr = curr_nbf.addr;
     io_cmd_header_cast_o.msg_type = e_bedrock_mem_uc_wr;
+    io_cmd_header_cast_o.subop = e_bedrock_store;
     
     freeze_addr.nonlocal = '0;
     freeze_addr.tile     = counter_r;
@@ -145,7 +150,6 @@ module bp_stream_nbf_loader
         if (~reset_i)
           begin
             io_cmd_v_o = ~credits_full_lo;
-            io_cmd_data_o = '0;
             io_cmd_header_cast_o.addr = counter_r;
             io_cmd_header_cast_o.size = e_bedrock_msg_size_8;
             if (io_cmd_yumi_i)
@@ -171,7 +175,6 @@ module bp_stream_nbf_loader
                   begin
                     io_cmd_header_cast_o.addr = 32'h00000000;
                     io_cmd_header_cast_o.size = e_bedrock_msg_size_8;
-                    io_cmd_data_o = '0;
                     if (io_cmd_yumi_i)
                       begin
                         state_n = 3;
@@ -189,7 +192,6 @@ module bp_stream_nbf_loader
     else if (state_r == 2)
       begin
         io_cmd_v_o = ~credits_full_lo;
-        io_cmd_data_o = '0;
         io_cmd_header_cast_o.addr = freeze_addr;
         io_cmd_header_cast_o.size = e_bedrock_msg_size_8;
         if (io_cmd_yumi_i)
