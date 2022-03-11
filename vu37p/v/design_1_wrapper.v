@@ -26,7 +26,7 @@ module design_1_wrapper
 
  #(parameter bp_params_e bp_params_p = e_bp_multicore_1_cfg
    `declare_bp_proc_params(bp_params_p)
-   `declare_bp_bedrock_mem_if_widths(paddr_width_p, did_width_p, lce_id_width_p, lce_assoc_p, cce)
+   `declare_bp_bedrock_mem_if_widths(paddr_width_p, did_width_p, lce_id_width_p, lce_assoc_p)
    
   ,parameter load_nbf_p = 1
    
@@ -238,23 +238,23 @@ module design_1_wrapper
   
 `declare_bsg_ready_and_link_sif_s(io_noc_flit_width_p, bp_io_noc_ral_link_s);
 `declare_bsg_ready_and_link_sif_s(mem_noc_flit_width_p, bp_mem_noc_ral_link_s);
-`declare_bp_bedrock_mem_if(paddr_width_p, did_width_p, lce_id_width_p, lce_assoc_p, cce)
+`declare_bp_bedrock_mem_if(paddr_width_p, did_width_p, lce_id_width_p, lce_assoc_p)
 
 bp_io_noc_ral_link_s proc_cmd_link_li, proc_cmd_link_lo;
 bp_io_noc_ral_link_s proc_resp_link_li, proc_resp_link_lo;
 bp_mem_noc_ral_link_s [mc_x_dim_p-1:0] dram_cmd_link_lo, dram_resp_link_li;
 
-bp_bedrock_cce_mem_header_s host_cmd_header_li;
+bp_bedrock_mem_header_s host_cmd_header_li;
 logic [cce_block_width_p-1:0] host_cmd_data_li;
 logic host_cmd_v_li, host_cmd_ready_lo;
-bp_bedrock_cce_mem_header_s host_resp_header_lo;
+bp_bedrock_mem_header_s host_resp_header_lo;
 logic [cce_block_width_p-1:0] host_resp_data_lo;
 logic host_resp_v_lo, host_resp_ready_li;
 
-bp_bedrock_cce_mem_header_s nbf_cmd_header_lo;
+bp_bedrock_mem_header_s nbf_cmd_header_lo;
 logic [cce_block_width_p-1:0] nbf_cmd_data_lo;
 logic nbf_cmd_v_lo, nbf_cmd_ready_li;
-bp_bedrock_cce_mem_header_s nbf_resp_header_li;
+bp_bedrock_mem_header_s nbf_resp_header_li;
 logic [cce_block_width_p-1:0] nbf_resp_data_li;
 logic nbf_resp_v_li, nbf_resp_ready_lo;
 
@@ -266,20 +266,22 @@ bp_io_noc_ral_link_s send_cmd_link_lo, send_resp_link_li;
 bp_io_noc_ral_link_s recv_cmd_link_li, recv_resp_link_lo;
 
 // Chip
+//
+
 bp_multicore
  #(.bp_params_p(bp_params_p))
  proc
   (.core_clk_i(mig_clk)
-   ,.core_reset_i(mig_reset)
-   
+   //,.rt_clk_i(rt_clk_lo)
    ,.coh_clk_i(mig_clk)
-   ,.coh_reset_i(mig_reset)
-
    ,.io_clk_i(mig_clk)
-   ,.io_reset_i(mig_reset)
-
    ,.mem_clk_i(mig_clk)
+   //,.async_reset_i(mig_reset)
+   ,.core_reset_i(mig_reset)
+   ,.coh_reset_i(mig_reset)
+   ,.io_reset_i(mig_reset)
    ,.mem_reset_i(mig_reset)
+   ,.rt_clk_i('0)
 
    ,.my_did_i(proc_did_li)
    ,.host_did_i(dram_did_li)
@@ -538,22 +540,26 @@ bp_me_cce_to_mem_link_recv
   ,.axi_rvalid_i    (s_axi_rvalid)
   ,.axi_rready_o    (s_axi_rready)
   );
-  localparam block_offset_lp = `BSG_SAFE_CLOG2(cce_block_width_p/8);
-  localparam lg_lce_sets_lp = `BSG_SAFE_CLOG2(lce_sets_p);
-  localparam lg_num_cce_lp = `BSG_SAFE_CLOG2(num_cce_p);
+
+  logic [daddr_width_p-1:0] aw_daddr_lo;
+  bp_me_dram_hash_decode
+   #(.bp_params_p(bp_params_p))
+    aw_addr_hash
+    (.daddr_i(s_axi_awaddr_addr)
+     ,.daddr_o(aw_daddr_lo)
+     );
+
+  logic [daddr_width_p-1:0] ar_daddr_lo;
+  bp_me_dram_hash_decode
+   #(.bp_params_p(bp_params_p))
+    ar_addr_hash
+    (.daddr_i(s_axi_araddr_addr)
+     ,.daddr_o(ar_daddr_lo)
+     );
+
   // To reconstruct addresses exactly, this code should be kept in sync with bp_me/src/v/dev/bp_me_cce_to_cache
-  assign s_axi_awaddr = 
-    {s_axi_awaddr_addr[daddr_width_p-1:block_offset_lp+lg_lce_sets_lp]
-     ,s_axi_awaddr_addr[block_offset_lp+lg_num_cce_lp-1:block_offset_lp]
-     ,s_axi_awaddr_addr[block_offset_lp+lg_lce_sets_lp-1:block_offset_lp+lg_num_cce_lp]
-     ,s_axi_awaddr_addr[block_offset_lp-1:0]
-     } ^ dram_base_addr_gp;
-  assign s_axi_araddr =
-    {s_axi_araddr_addr[daddr_width_p-1:block_offset_lp+lg_lce_sets_lp]
-     ,s_axi_araddr_addr[block_offset_lp+lg_num_cce_lp-1:block_offset_lp]
-     ,s_axi_araddr_addr[block_offset_lp+lg_lce_sets_lp-1:block_offset_lp+lg_num_cce_lp]
-     ,s_axi_araddr_addr[block_offset_lp-1:0]
-     } ^ dram_base_addr_gp;
+  assign s_axi_awaddr = aw_daddr_lo ^ dram_base_addr_gp;
+  assign s_axi_araddr = ar_daddr_lo ^ dram_base_addr_gp;
   
   // LED breathing
   logic led_breath;
