@@ -19,7 +19,7 @@ sdk_commit := 758f976
 
 xdma_dir := $(THIS_DIR)/tools
 xdma_url := $(GITHUB)muwyse/dma_ip_drivers
-xdma_commit := d496bb4
+xdma_commit := af43da1
 
 vivado_bin := $(XILINX_VIVADO)/bin/vivado
 
@@ -55,7 +55,7 @@ clone_sdk:
 	cd $(sdk_dir) && git checkout -b vcu128 $(sdk_commit)
 	cd $(THIS_DIR)
 
-clone_xmda:
+clone_xdma:
 	git clone $(xdma_url) $(xdma_dir)
 	cd $(xdma_dir) && git checkout -b vcu128 $(xdma_commit)
 	cd $(THIS_DIR)
