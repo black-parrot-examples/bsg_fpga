@@ -575,8 +575,8 @@ module design_1_wrapper
 
   // subtract dram_base_addr_gp from axi addresses
   // S_AXI memory is at address 0x0, but BP issues address to DRAM at 0x8000_0000
-  assign s_axi_awaddr = s_axi_awaddr_lo[0+:s_axi_addr_width_p] - dram_base_addr_gp;
-  assign s_axi_araddr = s_axi_araddr_lo[0+:s_axi_addr_width_p] - dram_base_addr_gp;
+  assign s_axi_awaddr = s_axi_awaddr_lo[0+:s_axi_addr_width_p] ^ dram_base_addr_gp;
+  assign s_axi_araddr = s_axi_araddr_lo[0+:s_axi_addr_width_p] ^ dram_base_addr_gp;
 
   // LED breathing
   logic led_breath;
