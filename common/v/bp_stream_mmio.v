@@ -16,43 +16,43 @@ module bp_stream_mmio
 
  #(parameter bp_params_e bp_params_p = e_bp_default_cfg
   `declare_bp_proc_params(bp_params_p)
-  `declare_bp_bedrock_mem_if_widths(paddr_width_p, did_width_p, lce_id_width_p, lce_assoc_p, cce)
-  
+  `declare_bp_bedrock_mem_if_widths(paddr_width_p, did_width_p, lce_id_width_p, lce_assoc_p)
+
   ,parameter stream_data_width_p = 32
   )
 
   (input  clk_i
   ,input  reset_i
-  
-  ,input  [cce_mem_header_width_lp-1:0]     io_cmd_header_i
+
+  ,input  [mem_header_width_lp-1:0]         io_cmd_header_i
   ,input [cce_block_width_p-1:0]            io_cmd_data_i
   ,input                                    io_cmd_v_i
   ,output logic                             io_cmd_ready_o
-  
-  ,output [cce_mem_header_width_lp-1:0]     io_resp_header_o
+
+  ,output logic [mem_header_width_lp-1:0]   io_resp_header_o
   ,output [cce_block_width_p-1:0]           io_resp_data_o
-  ,output                                   io_resp_v_o
+  ,output logic                             io_resp_v_o
   ,input                                    io_resp_yumi_i
-  
+
   ,input                                    stream_v_i
   ,input  [stream_data_width_p-1:0]         stream_data_i
-  ,output                                   stream_ready_o
-  
-  ,output                                   stream_v_o
-  ,output [stream_data_width_p-1:0]         stream_data_o
+  ,output logic                             stream_ready_o
+
+  ,output logic                             stream_v_o
+  ,output logic [stream_data_width_p-1:0]   stream_data_o
   ,input                                    stream_yumi_i
   );
 
-  `declare_bp_bedrock_mem_if(paddr_width_p, did_width_p, lce_id_width_p, lce_assoc_p, cce);
-  
+  `declare_bp_bedrock_mem_if(paddr_width_p, did_width_p, lce_id_width_p, lce_assoc_p);
+
   // Temporarily support cce_data_size less than stream_data_width_p only
   // Temporarily support response of 64-bits data only
-  bp_bedrock_cce_mem_header_s io_cmd_header_li, io_resp_header_lo;
+  bp_bedrock_mem_header_s io_cmd_header_li, io_resp_header_lo;
   logic [cce_block_width_p-1:0] io_cmd_data_li, io_resp_data_lo;
-  
+
   logic io_cmd_v_li, io_cmd_yumi_lo;
   bsg_two_fifo
- #(.width_p(cce_mem_header_width_lp+cce_block_width_p))
+ #(.width_p(mem_header_width_lp+cce_block_width_p))
  cmd_fifo
   (.clk_i(clk_i)
    ,.reset_i(reset_i)
@@ -67,7 +67,7 @@ module bp_stream_mmio
   // streaming out fifo
   logic out_fifo_v_li, out_fifo_ready_lo;
   logic [stream_data_width_p-1:0] out_fifo_data_li;
-  
+
   bsg_two_fifo
  #(.width_p(stream_data_width_p)
   ) out_fifo
@@ -80,13 +80,13 @@ module bp_stream_mmio
   ,.v_o    (stream_v_o)
   ,.yumi_i (stream_yumi_i)
   );
-  
+
   // cmd_queue fifo
   logic queue_fifo_v_li, queue_fifo_ready_lo;
   logic queue_fifo_v_lo, queue_fifo_yumi_li;
-  
+
   bsg_fifo_1r1w_small
- #(.width_p(cce_mem_header_width_lp)
+ #(.width_p(mem_header_width_lp)
   ,.els_p  (16)
   ) queue_fifo
   (.clk_i  (clk_i)
@@ -98,9 +98,9 @@ module bp_stream_mmio
   ,.v_o    (queue_fifo_v_lo)
   ,.yumi_i (queue_fifo_yumi_li)
   );
-  
+
   logic [1:0] state_r, state_n;
-  
+
   always_ff @(posedge clk_i)
     if (reset_i)
       begin
@@ -110,7 +110,7 @@ module bp_stream_mmio
       begin
         state_r <= state_n;
       end
-  
+
   always_comb
   begin
     state_n = state_r;
@@ -118,7 +118,7 @@ module bp_stream_mmio
     queue_fifo_v_li = 1'b0;
     out_fifo_v_li = 1'b0;
     out_fifo_data_li = io_cmd_data_li;
-    
+
     if (state_r == 0)
       begin
         if (io_cmd_v_li & out_fifo_ready_lo & queue_fifo_ready_lo)
@@ -139,12 +139,12 @@ module bp_stream_mmio
           end
       end
   end
-  
+
   // resp fifo
   logic io_resp_v_li, io_resp_ready_lo;
 
   bsg_two_fifo
- #(.width_p(cce_mem_header_width_lp+cce_block_width_p)
+ #(.width_p(mem_header_width_lp+cce_block_width_p)
   ) resp_fifo
   (.clk_i  (clk_i)
   ,.reset_i(reset_i)
@@ -155,10 +155,10 @@ module bp_stream_mmio
   ,.v_o    (io_resp_v_o)
   ,.yumi_i (io_resp_yumi_i)
   );
-  
+
   logic sipo_v_lo, sipo_yumi_li;
   logic [dword_width_gp-1:0] sipo_data_lo;;
-  
+
   bsg_serial_in_parallel_out_full
  #(.width_p(stream_data_width_p)
   ,.els_p  (dword_width_gp/stream_data_width_p)
@@ -172,7 +172,7 @@ module bp_stream_mmio
   ,.v_o    (sipo_v_lo)
   ,.yumi_i (sipo_yumi_li)
   );
-  
+
   always_comb
   begin
     io_resp_v_li = 1'b0;

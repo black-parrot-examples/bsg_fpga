@@ -8,11 +8,11 @@ module bp_stream_host
   import bp_common_pkg::*;
   import bp_be_pkg::*;
   import bp_me_pkg::*;
-  
+
  #(parameter bp_params_e bp_params_p = e_bp_default_cfg
   `declare_bp_proc_params(bp_params_p)
-  `declare_bp_bedrock_mem_if_widths(paddr_width_p, did_width_p, lce_id_width_p, lce_assoc_p, cce)
-  
+  `declare_bp_bedrock_mem_if_widths(paddr_width_p, did_width_p, lce_id_width_p, lce_assoc_p)
+
   ,parameter stream_addr_width_p = 32
   ,parameter stream_data_width_p = 32
   ,parameter clear_freeze_p = 0
@@ -22,53 +22,53 @@ module bp_stream_host
 
   (input                                        clk_i
   ,input                                        reset_i
-  ,output                                       prog_done_o
+  ,output logic                                 prog_done_o
 
-  ,input  [cce_mem_header_width_lp-1:0]         io_cmd_header_i
+  ,input  [mem_header_width_lp-1:0]             io_cmd_header_i
   ,input [cce_block_width_p-1:0]                io_cmd_data_i
   ,input                                        io_cmd_v_i
-  ,output                                       io_cmd_ready_o
+  ,output logic                                 io_cmd_ready_o
 
-  ,output [cce_mem_header_width_lp-1:0]         io_resp_header_o
+  ,output logic [mem_header_width_lp-1:0]       io_resp_header_o
   ,output [cce_block_width_p-1:0]               io_resp_data_o
-  ,output                                       io_resp_v_o
+  ,output logic                                 io_resp_v_o
   ,input                                        io_resp_yumi_i
-  
-  ,output [cce_mem_header_width_lp-1:0]         io_cmd_header_o
+
+  ,output logic [mem_header_width_lp-1:0]       io_cmd_header_o
   ,output [cce_block_width_p-1:0]               io_cmd_data_o
-  ,output                                       io_cmd_v_o
+  ,output logic                                 io_cmd_v_o
   ,input                                        io_cmd_yumi_i
-  
-  ,input  [cce_mem_header_width_lp-1:0]         io_resp_header_i
+
+  ,input  [mem_header_width_lp-1:0]             io_resp_header_i
   ,input [cce_block_width_p-1:0]                io_resp_data_i
   ,input                                        io_resp_v_i
-  ,output                                       io_resp_ready_o
-  
+  ,output logic                                 io_resp_ready_o
+
   ,input                                        stream_v_i
   ,input  [stream_addr_width_p-1:0]             stream_addr_i
   ,input  [stream_data_width_p-1:0]             stream_data_i
-  ,output                                       stream_yumi_o
-  
-  ,output                                       stream_v_o
-  ,output [stream_data_width_p-1:0]             stream_data_o
+  ,output logic                                 stream_yumi_o
+
+  ,output logic                                 stream_v_o
+  ,output logic [stream_data_width_p-1:0]       stream_data_o
   ,input                                        stream_ready_i
   );
-  
-  `declare_bp_bedrock_mem_if(paddr_width_p, did_width_p, lce_id_width_p, lce_assoc_p, cce);
-  
+
+  `declare_bp_bedrock_mem_if(paddr_width_p, did_width_p, lce_id_width_p, lce_assoc_p);
+
   // AXI-Lite address map
   //
-  // Host software should send data to specific addresses for 
+  // Host software should send data to specific addresses for
   // specific purposes
   //
   logic nbf_v_li, mmio_v_li;
   logic nbf_ready_lo, mmio_ready_lo;;
-  
+
   assign nbf_v_li  = stream_v_i & (stream_addr_i == 32'h00000010);
   assign mmio_v_li = stream_v_i & (stream_addr_i == 32'h00000020);
-  
+
   assign stream_yumi_o = (nbf_v_li & nbf_ready_lo) | (mmio_v_li & mmio_ready_lo);
-  
+
   // nbf loader
   bp_stream_nbf_loader
  #(.bp_params_p(bp_params_p)
@@ -93,7 +93,7 @@ module bp_stream_host
   ,.stream_data_i  (stream_data_i)
   ,.stream_ready_o (nbf_ready_lo)
   );
-  
+
   // mmio
   bp_stream_mmio
  #(.bp_params_p(bp_params_p)
@@ -115,7 +115,7 @@ module bp_stream_host
   ,.stream_v_i      (mmio_v_li)
   ,.stream_data_i   (stream_data_i)
   ,.stream_ready_o  (mmio_ready_lo)
-  
+
   ,.stream_v_o      (stream_v_o)
   ,.stream_data_o   (stream_data_o)
   ,.stream_yumi_i   (stream_v_o & stream_ready_i)
