@@ -19,7 +19,7 @@ sdk_commit := 758f976
 
 xdma_dir := $(THIS_DIR)/tools
 xdma_url := $(GITHUB)muwyse/dma_ip_drivers
-xdma_commit := b589fbb
+xdma_commit := a3f2893
 
 vivado_bin := $(XILINX_VIVADO)/bin/vivado
 
