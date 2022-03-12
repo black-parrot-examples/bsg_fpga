@@ -64,12 +64,12 @@ prep:
 	$(MAKE) -C $(rtl_dir) libs
 	$(MAKE) -C $(rtl_dir) tools
 	$(MAKE) -C $(sdk_dir) sdk
+	$(MAKE) -C $(sdk_dir) bedrock
 	$(MAKE) -C $(sdk_dir) prog
 	#$(MAKE) -C $(sdk_dir) linux
 
 build: $(project_dir)
 $(project_dir): $(build_tcl)
-	$(MAKE) -C $(sdk_dir) bedrock
 	$(vivado_bin) -mode batch -source $(build_tcl)
 
 open:
