@@ -99,7 +99,7 @@ module bp_stream_nbf_loader
   bp_nbf_s curr_nbf;
   assign curr_nbf = nbf_width_lp'(incoming_nbf);
 
-  logic [31:0] counter_r, counter_n;
+  logic [paddr_width_p-1:0] counter_r, counter_n;
   logic [1:0] state_r, state_n;
 
   assign done_o = (state_r == 3) & credits_empty_lo;
@@ -154,8 +154,8 @@ module bp_stream_nbf_loader
             io_cmd_header_cast_o.size = e_bedrock_msg_size_8;
             if (io_cmd_yumi_i)
               begin
-                counter_n = counter_r + 32'h8;
-                if (counter_r == 32'h84000000)
+                counter_n = counter_r + 'h8;
+                if (counter_r == 'h100000000)
                   begin
                     counter_n = '0;
                     state_n = 1;
@@ -196,7 +196,7 @@ module bp_stream_nbf_loader
         io_cmd_header_cast_o.size = e_bedrock_msg_size_8;
         if (io_cmd_yumi_i)
           begin
-            counter_n = counter_r + 32'd1;
+            counter_n = counter_r + 'd1;
             if (counter_r == num_core_p-1)
               begin
                 counter_n = '0;
@@ -212,7 +212,7 @@ module bp_stream_nbf_loader
     if (reset_i)
       begin
         state_r <= '0;
-        counter_r <= 32'h80000000;
+        counter_r <= 'h080000000;
       end
     else
       begin
