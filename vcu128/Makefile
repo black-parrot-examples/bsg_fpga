@@ -1,7 +1,8 @@
-THIS_DIR :=$(realpath $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST)))))
+BASE := $(shell git rev-parse --show-toplevel)
+TOP := $(BASE)/vcu128
 
-GIT_CLONE_STYLE :=ssh
-#GIT_CLONE_STYLE :=https
+# set this variable to "https" to use https git clone
+GIT_CLONE_STYLE ?= ssh
 
 ifeq ($(GIT_CLONE_STYLE),ssh)
   GITHUB    :=git@github.com:
@@ -9,26 +10,29 @@ else ifeq ($(GIT_CLONE_STYLE),https)
   GITHUB    :=https://github.com/
 endif
 
-rtl_dir := $(THIS_DIR)/rtl
+rtl_dir := $(TOP)/rtl
 rtl_url := $(GITHUB)black-parrot/black-parrot
 rtl_commit := f1a68bfe
 
-sdk_dir := $(THIS_DIR)/sdk
+sdk_dir := $(TOP)/sdk
 sdk_url := $(GITHUB)black-parrot-sdk/black-parrot-sdk
 sdk_commit := 758f976
 
-xdma_dir := $(THIS_DIR)/tools
+xdma_dir := $(TOP)/tools
 xdma_url := $(GITHUB)muwyse/dma_ip_drivers
 xdma_commit := a3f2893
 
+# set this variable to point to correct vivado binary
+# the vcu128 design assumes version 2019.1
 vivado_bin := $(XILINX_VIVADO)/bin/vivado
 
-project_name ?= vcu128_bp
-project_dir := $(THIS_DIR)/$(project_name)
-project_xpr_dir := $(project_dir)/$(project_name).xpr
-build_tcl := $(THIS_DIR)/bp_fpga.tcl
+# set this variable to specify vivado project name
+PROJECT_NAME ?= vcu128_bp
+project_dir := $(TOP)/$(PROJECT_NAME)
+project_xpr := $(project_dir)/$(PROJECT_NAME).xpr
+build_tcl := $(TOP)/bp_fpga.tcl
 
-script_dir := $(THIS_DIR)/script
+script_dir := $(TOP)/script
 generate_tcl := $(script_dir)/generate_bitstream.tcl
 program_tcl := $(script_dir)/program_fpga.tcl
 update_tcl := $(script_dir)/update_tcl.tcl
@@ -47,18 +51,15 @@ libs:
 
 clone_rtl:
 	git clone $(rtl_url) $(rtl_dir)
-	cd $(rtl_dir) && git checkout -b vcu128 $(rtl_commit)
-	cd $(THIS_DIR)
+	git -c $(rtl_dir) checkout -b vcu128 $(rtl_commit)
 
 clone_sdk:
 	git clone $(sdk_url) $(sdk_dir)
-	cd $(sdk_dir) && git checkout -b vcu128 $(sdk_commit)
-	cd $(THIS_DIR)
+	git -c $(sdk_dir) checkout -b vcu128 $(sdk_commit)
 
 clone_xdma:
 	git clone $(xdma_url) $(xdma_dir)
-	cd $(xdma_dir) && git checkout -b vcu128 $(xdma_commit)
-	cd $(THIS_DIR)
+	git -c $(xdma_dir) checkout -b vcu128 $(xdma_commit)
 
 prep:
 	$(MAKE) -C $(rtl_dir) libs
@@ -68,20 +69,19 @@ prep:
 	$(MAKE) -C $(sdk_dir) prog
 	#$(MAKE) -C $(sdk_dir) linux
 
-build: $(project_dir)
-$(project_dir): $(build_tcl)
-	$(vivado_bin) -mode batch -source $(build_tcl)
+build:
+	$(vivado_bin) -mode batch -source $(build_tcl) -tclargs --project_name $(PROJECT_NAME)
 
 open:
-	$(vivado_bin) $(project_xpr_dir) &
+	$(vivado_bin) $(project_xpr) &
 
 JOBS ?= 8
 generate_bitstream:
-	$(vivado_bin) -mode batch -source $(generate_tcl) -tclargs $(JOBS)
+	$(vivado_bin) -mode batch -source $(generate_tcl) -tclargs --project_name $(PROJECT_NAME) --jobs $(JOBS)
 
 copy_bitstream:
-	cp $(project_dir)/$(project_name).runs/impl_1/design_1_wrapper.bit .
-	cp $(project_dir)/$(project_name).runs/impl_1/design_1_wrapper.ltx .
+	-cp $(project_dir)/$(PROJECT_NAME).runs/impl_1/design_1_wrapper.bit .
+	-cp $(project_dir)/$(PROJECT_NAME).runs/impl_1/design_1_wrapper.ltx .
 
 DATE:=$(shell date +"%c")
 BITFILE ?= ./design_1_wrapper.bit

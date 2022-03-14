@@ -31,21 +31,11 @@
 
 # Set the reference directory for source file relative paths (by default the value is script directory path)
 set origin_dir "."
-
-# Use origin directory path location variable, if specified in the tcl shell
-if { [info exists ::origin_dir_loc] } {
-  set origin_dir $::origin_dir_loc
-}
+set blackparrot_dir "$origin_dir/rtl"
 
 # Set the project name
 set _xil_proj_name_ "vcu128_bp"
 
-# Use project name variable, if specified in the tcl shell
-if { [info exists ::user_project_name] } {
-  set _xil_proj_name_ $::user_project_name
-}
-
-variable script_file
 set script_file "bp_fpga.tcl"
 
 # Help information for this script
@@ -92,10 +82,6 @@ if { $::argc > 0 } {
     }
   }
 }
-
-# Set the directory path for the original project from where this script was exported
-set orig_proj_dir "[file normalize "$origin_dir/vcu128_bp"]"
-set blackparrot_dir "$origin_dir/rtl"
 
 # Create project
 create_project ${_xil_proj_name_} ./${_xil_proj_name_} -part xcvu37p-fsvh2892-2L-e-es1
@@ -144,9 +130,8 @@ if {[string equal [get_filesets -quiet sources_1] ""]} {
 }
 
 ## Automatically discover BlackParrot source files
-
 # reads the top-level flist and returns a 2-element list: [list $include_dirs $source_files]
-proc load_bp_sources_from_flist { origin_dir blackparrot_dir } {
+proc load_bp_sources_from_flist { blackparrot_dir } {
   # Set include vars used in flists
   set BP_TOP_DIR "$blackparrot_dir/bp_top/"
   set BP_COMMON_DIR "$blackparrot_dir/bp_common/"
@@ -188,7 +173,7 @@ proc load_bp_sources_from_flist { origin_dir blackparrot_dir } {
   list $include_dirs $source_files
 }
 
-lassign [load_bp_sources_from_flist $origin_dir $blackparrot_dir] flist_include_dirs flist_source_files
+lassign [load_bp_sources_from_flist $blackparrot_dir] flist_include_dirs flist_source_files
 
 add_files -norecurse -scan_for_includes -fileset sources_1 $flist_source_files
 
