@@ -155,7 +155,7 @@ module bp_stream_nbf_loader
             if (io_cmd_yumi_i)
               begin
                 counter_n = counter_r + 'h8;
-                if (counter_r == 'h100000000)
+                if (counter_r == 'h84000000)
                   begin
                     counter_n = '0;
                     state_n = 1;
@@ -173,7 +173,7 @@ module bp_stream_nbf_loader
               begin
                 if (clear_freeze_p == 0)
                   begin
-                    io_cmd_header_cast_o.addr = 32'h00000000;
+                    io_cmd_header_cast_o.addr = '0;
                     io_cmd_header_cast_o.size = e_bedrock_msg_size_8;
                     if (io_cmd_yumi_i)
                       begin
