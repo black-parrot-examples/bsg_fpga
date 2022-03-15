@@ -283,7 +283,7 @@ module design_1_wrapper
    #(.bp_params_p(bp_params_p))
    proc
     (.core_clk_i(mig_clk)
-     ,.rt_clk_i('0)
+     //,.rt_clk_i('0)
      ,.core_reset_i(mig_reset)
 
      ,.coh_clk_i(mig_clk)
