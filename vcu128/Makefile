@@ -16,11 +16,11 @@ rtl_commit := 4ab7afd1
 
 sdk_dir := $(TOP)/sdk
 sdk_url := $(GITHUB)black-parrot-sdk/black-parrot-sdk
-sdk_commit := 23cdc44
+sdk_commit := 78012c4
 
 xdma_dir := $(TOP)/tools
 xdma_url := $(GITHUB)muwyse/dma_ip_drivers
-xdma_commit := a3f2893
+xdma_commit := 8f7e1af
 
 # set this variable to point to correct vivado binary
 # the vcu128 design assumes version 2019.1
