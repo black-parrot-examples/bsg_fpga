@@ -56,9 +56,6 @@ module design_1_wrapper
    , localparam m_axi_data_width_p   = 32
    , localparam m_axi_strb_width_p   = (m_axi_data_width_p/8)
    , localparam m_axi_buffer_els_p   = 16
-
-   , localparam cce_instr_ram_addr_width_lp = `BSG_SAFE_CLOG2(num_cce_instr_ram_els_p)
-   , localparam cce_ucode_filename_lp = "mesi.mem"
    )
    (pci_express_x4_rxn
     , pci_express_x4_rxp
