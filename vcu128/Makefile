@@ -16,7 +16,7 @@ rtl_commit := 4ab7afd1
 
 sdk_dir := $(TOP)/sdk
 sdk_url := $(GITHUB)black-parrot-sdk/black-parrot-sdk
-sdk_commit := a5c5765
+sdk_commit := 23cdc44
 
 xdma_dir := $(TOP)/tools
 xdma_url := $(GITHUB)muwyse/dma_ip_drivers
