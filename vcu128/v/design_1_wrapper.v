@@ -7,9 +7,6 @@
  *
  *    Parameters:
  *    bp_params_p - specifies number of cores and CCE type, and all BP parameters
- *    dram_high_addr_p - specifies first address after usable DRAM address
- *                       space. Must be within FPGA design DRAM capacity, and
- *                       no more than 2 GiB in current BP design.
  */
 
 // Original header:
@@ -43,9 +40,6 @@ module design_1_wrapper
    `declare_bp_proc_params(bp_params_p)
    `declare_bp_bedrock_mem_if_widths(paddr_width_p, did_width_p, lce_id_width_p, lce_assoc_p)
 
-   // first address outside of dram range (default = 256 MiB dram)
-   , parameter dram_high_addr_p = dram_base_addr_gp + (2**28)
-
    , localparam s_axi_addr_width_p   = 33
    , localparam s_axi_id_width_p     = 6
    , localparam s_axi_data_width_p   = 256
@@ -68,18 +62,29 @@ module design_1_wrapper
     , led
     );
 
-  input [3:0]pci_express_x4_rxn;
-  input [3:0]pci_express_x4_rxp;
-  output [3:0]pci_express_x4_txn;
-  output [3:0]pci_express_x4_txp;
+  // FPGA device I/O signals
+  input wire [3:0] pci_express_x4_rxn;
+  input wire [3:0] pci_express_x4_rxp;
+  output wire [3:0] pci_express_x4_txn;
+  output wire [3:0] pci_express_x4_txp;
+  input wire pcie_perstn;
+  input wire [0:0] pcie_refclk_clk_n;
+  input wire [0:0] pcie_refclk_clk_p;
+  input wire rstn;
+  output wire [7:0] led;
 
-  input pcie_perstn;
+  // TODO: unused here, remove BD outputs?
+  // PCIe signals from block design
+  wire pcie_clk;
+  wire pcie_lnk_up;
+  wire [0:0]pcie_rstn;
 
-  input [0:0]pcie_refclk_clk_n;
-  input [0:0]pcie_refclk_clk_p;
-  input rstn;
-  output [7:0] led;
+  // Clock and Reset for BP domain
+  // AXIL M and AXI S are in this domain
+  wire bp_clk;
+  wire [0:0]bp_rstn;
 
+  // AXIL M from PC Host for BP I/O
   wire [m_axi_addr_width_p-1:0]m_axi_lite_araddr;
   wire [2:0]m_axi_lite_arprot;
   wire m_axi_lite_arready;
@@ -100,35 +105,7 @@ module design_1_wrapper
   wire [m_axi_strb_width_p-1:0]m_axi_lite_wstrb;
   wire m_axi_lite_wvalid;
 
-  wire apb_complete;
-  wire mig_clk;
-  wire [0:0]mig_rstn;
-
-  wire [3:0]pci_express_x4_rxn;
-  wire [3:0]pci_express_x4_rxp;
-  wire [3:0]pci_express_x4_txn;
-  wire [3:0]pci_express_x4_txp;
-
-  wire pcie_clk;
-  wire pcie_lnk_up;
-  wire pcie_perstn;
-
-  wire [0:0]pcie_refclk_clk_n;
-  wire [0:0]pcie_refclk_clk_p;
-
-  wire [0:0]pcie_rstn;
-  wire rstn;
-  wire [7:0] led;
-
-  wire [21:0]s_apb_paddr = '0;
-  wire s_apb_penable = 1'b0;
-  wire [31:0]s_apb_prdata;
-  wire s_apb_pready;
-  wire s_apb_psel = 1'b0;
-  wire s_apb_pslverr;
-  wire [31:0]s_apb_pwdata = '0;
-  wire s_apb_pwrite = 1'b0;
-
+  // AXI S from BP to HBM
   wire [daddr_width_p-1:0] s_axi_araddr_addr;
   wire [`BSG_SAFE_CLOG2(num_cce_p)-1:0] s_axi_araddr_cache_id;
   wire [s_axi_addr_width_p-1:0]s_axi_araddr;
@@ -177,29 +154,32 @@ module design_1_wrapper
   wire [s_axi_strb_width_p-1:0]s_axi_wstrb;
   wire s_axi_wvalid;
 
+  // HBM S_APB
+  // mostly unused, except for apb_complete
+  wire apb_complete;
+  wire [21:0]s_apb_paddr = '0;
+  wire s_apb_penable = 1'b0;
+  wire [31:0]s_apb_prdata;
+  wire s_apb_pready;
+  wire s_apb_psel = 1'b0;
+  wire s_apb_pslverr;
+  wire [31:0]s_apb_pwdata = '0;
+  wire s_apb_pwrite = 1'b0;
 
+  // AXIL M to FIFO
   wire m_axi_lite_v_lo, m_axi_lite_yumi_li;
   wire [m_axi_addr_width_p-1:0] m_axi_lite_addr_lo;
   wire m_axi_lite_v_li, m_axi_lite_ready_lo;
   wire [m_axi_data_width_p-1:0] m_axi_lite_data_li, m_axi_lite_data_lo;
 
-  // LEDs
-  assign led[0] = pcie_lnk_up;
-  assign led[1] = apb_complete;
-
-  assign led[4] = ~rstn;
-  assign led[5] = ~rstn;
-  assign led[6] = rstn;
-  assign led[7] = rstn;
-
-  // mig_reset
-  logic mig_reset;
+  // BP domain reset
+  logic bp_reset;
   bsg_dff
    #(.width_p(1))
     mig_dff
-    (.clk_i (mig_clk)
-     ,.data_i(~mig_rstn | ~apb_complete)
-     ,.data_o(mig_reset)
+    (.clk_i (bp_clk)
+     ,.data_i(~bp_rstn | ~apb_complete)
+     ,.data_o(bp_reset)
      );
 
   // m_axi_lite adapter
@@ -209,8 +189,8 @@ module design_1_wrapper
     ,.buffer_size_p(m_axi_buffer_els_p)
     )
     m_axi_lite_adapter
-    (.clk_i     (mig_clk)
-     ,.reset_i  (mig_reset)
+    (.clk_i     (bp_clk)
+     ,.reset_i  (bp_reset)
      // read address
      ,.araddr_i (m_axi_lite_araddr)
      ,.arprot_i (m_axi_lite_arprot)
@@ -279,18 +259,18 @@ module design_1_wrapper
   bp_multicore
    #(.bp_params_p(bp_params_p))
    proc
-    (.core_clk_i(mig_clk)
+    (.core_clk_i(bp_clk)
      ,.rt_clk_i('0)
-     ,.core_reset_i(mig_reset)
+     ,.core_reset_i(bp_reset)
 
-     ,.coh_clk_i(mig_clk)
-     ,.coh_reset_i(mig_reset)
+     ,.coh_clk_i(bp_clk)
+     ,.coh_reset_i(bp_reset)
 
-     ,.io_clk_i(mig_clk)
-     ,.io_reset_i(mig_reset)
+     ,.io_clk_i(bp_clk)
+     ,.io_reset_i(bp_reset)
 
-     ,.mem_clk_i(mig_clk)
-     ,.mem_reset_i(mig_reset)
+     ,.mem_clk_i(bp_clk)
+     ,.mem_reset_i(bp_reset)
 
      ,.my_did_i(proc_did_li)
      ,.host_did_i(dram_did_li)
@@ -333,8 +313,8 @@ module design_1_wrapper
      ,.len_width_p(io_noc_len_width_p)
      )
    host_link_send
-    (.clk_i(mig_clk)
-     ,.reset_i(mig_reset)
+    (.clk_i(bp_clk)
+     ,.reset_i(bp_reset)
 
      ,.mem_cmd_header_i(nbf_cmd_header_lo)
      ,.mem_cmd_data_i(nbf_cmd_data_lo)
@@ -363,8 +343,8 @@ module design_1_wrapper
      ,.len_width_p(io_noc_len_width_p)
      )
    host_link_recv
-    (.clk_i(mig_clk)
-     ,.reset_i(mig_reset)
+    (.clk_i(bp_clk)
+     ,.reset_i(bp_reset)
 
      ,.dst_cord_i(host_resp_header_lo.payload.did)
      ,.dst_cid_i('0)
@@ -410,8 +390,8 @@ module design_1_wrapper
          ,.dma_burst_len_p(l2_block_size_in_fill_p)
          )
        wh_to_cache_dma
-        (.clk_i(mig_clk)
-         ,.reset_i(mig_reset)
+        (.clk_i(bp_clk)
+         ,.reset_i(bp_reset)
 
          ,.wh_link_sif_i(dram_cmd_link_lo[i])
          ,.wh_dma_id_i(dma_id_li)
@@ -432,18 +412,14 @@ module design_1_wrapper
     end
 
   logic nbf_done_lo;
-
-  // pcie stream host (NBF and MMIO)
-  assign led[3] = nbf_done_lo;
-
   bp_stream_host
    #(.bp_params_p(bp_params_p)
      ,.stream_addr_width_p(m_axi_addr_width_p)
      ,.stream_data_width_p(m_axi_data_width_p)
      )
     host
-    (.clk_i(mig_clk)
-     ,.reset_i(mig_reset)
+    (.clk_i(bp_clk)
+     ,.reset_i(bp_reset)
      ,.prog_done_o(nbf_done_lo)
 
      // IO from BP
@@ -495,8 +471,8 @@ module design_1_wrapper
      ,.axi_burst_len_p      (s_axi_burst_len_p)
      )
     cache_to_axi
-    (.clk_i            (mig_clk)
-     ,.reset_i         (mig_reset)
+    (.clk_i            (bp_clk)
+     ,.reset_i         (bp_reset)
 
      ,.dma_pkt_i       (dma_pkt_lo)
      ,.dma_pkt_v_i     (dma_pkt_v_lo)
@@ -575,24 +551,30 @@ module design_1_wrapper
   assign s_axi_awaddr = s_axi_awaddr_lo[0+:s_axi_addr_width_p] ^ dram_base_addr_gp;
   assign s_axi_araddr = s_axi_araddr_lo[0+:s_axi_addr_width_p] ^ dram_base_addr_gp;
 
-  // LED breathing
-  logic led_breath;
-  logic [31:0] led_counter_r;
-  assign led[2] = led_breath;
-  always_ff @(posedge mig_clk)
-    if (mig_reset)
-      begin
-        led_counter_r <= '0;
-        led_breath <= 1'b0;
-      end
-    else
-      begin
-        led_counter_r <= (led_counter_r == 32'd12500000)? '0 : led_counter_r + 1;
-        led_breath <= (led_counter_r == 32'd12500000)? ~led_breath : led_breath;
-      end
-
   design_1 design_1_i
-    (.apb_complete(apb_complete),
+    (
+     // external reset pin
+     .reset(~rstn),
+
+     // PCIe to/from PC Host
+     .pcie_refclk_clk_n(pcie_refclk_clk_n),
+     .pcie_refclk_clk_p(pcie_refclk_clk_p),
+     .pcie_perstn(pcie_perstn),
+     .pci_express_x4_rxn(pci_express_x4_rxn),
+     .pci_express_x4_rxp(pci_express_x4_rxp),
+     .pci_express_x4_txn(pci_express_x4_txn),
+     .pci_express_x4_txp(pci_express_x4_txp),
+     // PCIe to design
+     .pcie_clk(pcie_clk),
+     .pcie_rstn(pcie_rstn),
+     .pcie_lnk_up(pcie_lnk_up),
+
+     // Clock and Reset for BP domain
+     // AXIL M and AXI S are in this domain
+     .mig_clk(bp_clk),
+     .mig_rstn(bp_rstn),
+
+     // AXIL M from PC Host for BP I/O
      .m_axi_lite_araddr(m_axi_lite_araddr),
      .m_axi_lite_arprot(m_axi_lite_arprot),
      .m_axi_lite_arready(m_axi_lite_arready),
@@ -612,27 +594,8 @@ module design_1_wrapper
      .m_axi_lite_wready(m_axi_lite_wready),
      .m_axi_lite_wstrb(m_axi_lite_wstrb),
      .m_axi_lite_wvalid(m_axi_lite_wvalid),
-     .mig_clk(mig_clk),
-     .mig_rstn(mig_rstn),
-     .pci_express_x4_rxn(pci_express_x4_rxn),
-     .pci_express_x4_rxp(pci_express_x4_rxp),
-     .pci_express_x4_txn(pci_express_x4_txn),
-     .pci_express_x4_txp(pci_express_x4_txp),
-     .pcie_clk(pcie_clk),
-     .pcie_lnk_up(pcie_lnk_up),
-     .pcie_perstn(pcie_perstn),
-     .pcie_refclk_clk_n(pcie_refclk_clk_n),
-     .pcie_refclk_clk_p(pcie_refclk_clk_p),
-     .pcie_rstn(pcie_rstn),
-     .reset(~rstn),
-     .s_apb_paddr(s_apb_paddr),
-     .s_apb_penable(s_apb_penable),
-     .s_apb_prdata(s_apb_prdata),
-     .s_apb_pready(s_apb_pready),
-     .s_apb_psel(s_apb_psel),
-     .s_apb_pslverr(s_apb_pslverr),
-     .s_apb_pwdata(s_apb_pwdata),
-     .s_apb_pwrite(s_apb_pwrite),
+
+     // AXI S from BP to HBM
      .s_axi_araddr(s_axi_araddr),
      .s_axi_arburst(s_axi_arburst),
      .s_axi_arcache(s_axi_arcache),
@@ -672,6 +635,46 @@ module design_1_wrapper
      .s_axi_wready(s_axi_wready),
      .s_axi_wstrb(s_axi_wstrb),
      .s_axi_wvalid(s_axi_wvalid)
+
+     // HBM S_APB
+     // mostly unused, except for apb_complete
+     .apb_complete(apb_complete),
+     .s_apb_paddr(s_apb_paddr),
+     .s_apb_penable(s_apb_penable),
+     .s_apb_prdata(s_apb_prdata),
+     .s_apb_pready(s_apb_pready),
+     .s_apb_psel(s_apb_psel),
+     .s_apb_pslverr(s_apb_pslverr),
+     .s_apb_pwdata(s_apb_pwdata),
+     .s_apb_pwrite(s_apb_pwrite),
      );
+
+  // LEDs
+  assign led[0] = pcie_lnk_up;
+  assign led[1] = apb_complete;
+
+  // breathing
+  logic led_breath;
+  logic [31:0] led_counter_r;
+  assign led[2] = led_breath;
+  always_ff @(posedge bp_clk)
+    if (bp_reset)
+      begin
+        led_counter_r <= '0;
+        led_breath <= 1'b0;
+      end
+    else
+      begin
+        led_counter_r <= (led_counter_r == 32'd12500000)? '0 : led_counter_r + 1;
+        led_breath <= (led_counter_r == 32'd12500000)? ~led_breath : led_breath;
+      end
+  // pcie stream host (NBF and MMIO)
+  assign led[3] = nbf_done_lo;
+
+  // reset pin
+  assign led[4] = ~rstn;
+  assign led[5] = ~rstn;
+  assign led[6] = rstn;
+  assign led[7] = rstn;
 
 endmodule
