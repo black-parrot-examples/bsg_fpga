@@ -12,11 +12,11 @@ endif
 
 rtl_dir := $(TOP)/rtl
 rtl_url := $(GITHUB)black-parrot/black-parrot
-rtl_commit := 4ab7afd1
+rtl_commit := d561db40
 
 sdk_dir := $(TOP)/sdk
 sdk_url := $(GITHUB)black-parrot-sdk/black-parrot-sdk
-sdk_commit := 78012c4
+sdk_commit := 49281cc
 
 xdma_dir := $(TOP)/tools
 xdma_url := $(GITHUB)muwyse/dma_ip_drivers
