@@ -634,7 +634,7 @@ module design_1_wrapper
      .s_axi_wlast(s_axi_wlast),
      .s_axi_wready(s_axi_wready),
      .s_axi_wstrb(s_axi_wstrb),
-     .s_axi_wvalid(s_axi_wvalid)
+     .s_axi_wvalid(s_axi_wvalid),
 
      // HBM S_APB
      // mostly unused, except for apb_complete
@@ -646,7 +646,7 @@ module design_1_wrapper
      .s_apb_psel(s_apb_psel),
      .s_apb_pslverr(s_apb_pslverr),
      .s_apb_pwdata(s_apb_pwdata),
-     .s_apb_pwrite(s_apb_pwrite),
+     .s_apb_pwrite(s_apb_pwrite)
      );
 
   // LEDs
