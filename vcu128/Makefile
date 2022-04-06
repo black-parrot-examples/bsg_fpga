@@ -20,7 +20,7 @@ sdk_commit := 49281cc
 
 xdma_dir := $(TOP)/tools
 xdma_url := $(GITHUB)muwyse/dma_ip_drivers
-xdma_commit := 8f7e1af
+xdma_commit := 8d3686d
 
 # set this variable to point to correct vivado binary
 # the vcu128 design assumes version 2019.1
