@@ -32,6 +32,10 @@ vivado_bin := $(XILINX_VIVADO)/bin/vivado
 PROJECT_NAME ?= vcu128_bp
 project_dir := $(TOP)/$(PROJECT_NAME)
 project_xpr := $(project_dir)/$(PROJECT_NAME).xpr
+project_top_file := design_1_wrapper.v
+project_top := $(project_dir)/$(project_top_file)
+project_src_dir := $(TOP)/v
+project_top_template := $(project_src_dir)/$(project_top_file)
 build_tcl := $(TOP)/bp_fpga.tcl
 
 script_dir := $(TOP)/script
@@ -71,7 +75,12 @@ prep:
 	$(MAKE) -C $(sdk_dir) prog
 	#$(MAKE) -C $(sdk_dir) linux
 
-build:
+$(project_dir):
+	mkdir -p $(project_dir)
+
+CFG ?= e_bp_multicore_8_cfg
+build: | $(project_dir)
+	sed 's/BP_CFG_FLOWVAR/$(CFG)/g' $(project_top_template) > $(project_top)
 	$(vivado_bin) -mode batch -source $(build_tcl) -tclargs --project_name $(PROJECT_NAME)
 
 open:
