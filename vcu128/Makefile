@@ -37,11 +37,13 @@ project_top := $(project_dir)/$(project_top_file)
 project_src_dir := $(TOP)/v
 project_top_template := $(project_src_dir)/$(project_top_file)
 build_tcl := $(TOP)/bp_fpga.tcl
+project_report_dir := $(project_dir)/reports
 
 script_dir := $(TOP)/script
 generate_tcl := $(script_dir)/generate_bitstream.tcl
 program_tcl := $(script_dir)/program_fpga.tcl
 update_tcl := $(script_dir)/update_tcl.tcl
+reports_tcl := $(script_dir)/reports.tcl
 
 .DEFAULT_GOAL: echo
 
@@ -89,6 +91,13 @@ open:
 JOBS ?= 8
 generate_bitstream:
 	$(vivado_bin) -mode batch -source $(generate_tcl) -tclargs --project_name $(PROJECT_NAME) --jobs $(JOBS)
+
+$(project_report_dir):
+	mkdir -p $(project_report_dir)
+
+DEPTH ?= 12
+reports: | $(project_report_dir)
+	$(vivado_bin) -mode batch -source $(reports_tcl) -tclargs --project_name $(PROJECT_NAME) --depth $(DEPTH)
 
 copy_bitstream:
 	-cp $(project_dir)/$(PROJECT_NAME).runs/impl_1/design_1_wrapper.bit .
