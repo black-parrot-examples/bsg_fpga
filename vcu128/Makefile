@@ -108,6 +108,7 @@ BITFILE ?= ./design_1_wrapper.bit
 program_fpga:
 	sudo $(vivado_bin) -mode batch -source $(program_tcl) -tclargs $(BITFILE)
 	@echo "$(DATE): $(shell readlink -f $(BITFILE))" > last_programmed.txt
+	@echo "$(shell md5sum $(BITFILE))" >> last_programmed.txt
 
 check_device:
 	@lspci -vvv | grep -qE "Xilinx" && echo "FPGA found!" || "FPGA not found...try rebooting"
