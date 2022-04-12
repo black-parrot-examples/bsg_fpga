@@ -17,7 +17,7 @@ rtl_commit := 2f5ebd66
 
 sdk_dir := $(TOP)/sdk
 sdk_url := $(GITHUB)black-parrot-sdk/black-parrot-sdk
-sdk_commit := 1d1c9fd
+sdk_commit := 27fce36
 # 1d1c9fd - linux bump plus splash3
 
 xdma_dir := $(TOP)/tools
