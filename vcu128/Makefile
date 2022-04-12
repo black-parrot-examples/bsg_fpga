@@ -59,15 +59,15 @@ libs:
 
 clone_rtl:
 	git clone $(rtl_url) $(rtl_dir)
-	git -c $(rtl_dir) checkout -b vcu128 $(rtl_commit)
+	cd $(rtl_dir); git checkout -b vcu128 $(rtl_commit)
 
 clone_sdk:
 	git clone $(sdk_url) $(sdk_dir)
-	git -c $(sdk_dir) checkout -b vcu128 $(sdk_commit)
+	cd $(sdk_dir); git checkout -b vcu128 $(sdk_commit)
 
 clone_xdma:
 	git clone $(xdma_url) $(xdma_dir)
-	git -c $(xdma_dir) checkout -b vcu128 $(xdma_commit)
+	cd $(xdma_dir); git checkout -b vcu128 $(xdma_commit)
 
 prep:
 	$(MAKE) -C $(rtl_dir) libs
