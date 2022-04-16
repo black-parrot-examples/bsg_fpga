@@ -129,10 +129,10 @@
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/rtl/bp_me/src/v/network/bp_me_cce_to_mem_link_send.sv"
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/rtl/bp_me/src/v/network/bp_me_cord_to_id.sv"
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/rtl/bp_me/src/v/network/bp_me_lce_id_to_cord.sv"
-#    "/home/petrisko/scratch/bsg_fpga/vu37p/rtl/bp_me/src/v/network/bp_me_wormhole_packet_encode_lce_cmd.sv"
-#    "/home/petrisko/scratch/bsg_fpga/vu37p/rtl/bp_me/src/v/network/bp_me_wormhole_packet_encode_lce_req.sv"
-#    "/home/petrisko/scratch/bsg_fpga/vu37p/rtl/bp_me/src/v/network/bp_me_wormhole_packet_encode_lce_resp.sv"
-#    "/home/petrisko/scratch/bsg_fpga/vu37p/rtl/bp_me/src/v/network/bp_me_wormhole_packet_encode_mem.sv"
+#    "/home/petrisko/scratch/bsg_fpga/vu37p/rtl/bp_me/src/v/network/bp_me_bedrock_wormhole_header_encode_lce_cmd.sv"
+#    "/home/petrisko/scratch/bsg_fpga/vu37p/rtl/bp_me/src/v/network/bp_me_bedrock_wormhole_header_encode_lce_req.sv"
+#    "/home/petrisko/scratch/bsg_fpga/vu37p/rtl/bp_me/src/v/network/bp_me_bedrock_wormhole_header_encode_lce_resp.sv"
+#    "/home/petrisko/scratch/bsg_fpga/vu37p/rtl/bp_me/src/v/network/bp_me_bedrock_wormhole_header_encode.sv"
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/rtl/bp_top/src/v/bp_mem_complex.sv"
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/rtl/bp_top/src/v/bp_multicore.sv"
 #    "/home/petrisko/scratch/bsg_fpga/vu37p/rtl/bp_top/src/v/bp_unicore.sv"
@@ -486,8 +486,10 @@ set files [list \
  [file normalize "${origin_dir}/rtl/bp_top/src/v/bp_io_tile_node.sv"] \
  [file normalize "${origin_dir}/rtl/bp_me/src/v/lce/bp_lce.sv"] \
  [file normalize "${origin_dir}/rtl/bp_me/src/v/lce/bp_lce_cmd.sv"] \
+ [file normalize "${origin_dir}/rtl/bp_me/src/v/lce/bp_lce_fill.sv"] \
  [file normalize "${origin_dir}/rtl/bp_me/src/v/lce/bp_lce_req.sv"] \
  [file normalize "${origin_dir}/rtl/bp_me/src/v/network/bp_me_addr_to_cce_id.sv"] \
+ [file normalize "${origin_dir}/rtl/bp_me/src/v/network/bp_me_burst_gearbox.sv"] \
  [file normalize "${origin_dir}/rtl/external/basejump_stl/bsg_cache/bsg_cache_pkg.v"] \
  [file normalize "${origin_dir}/rtl/bp_me/src/v/network/bp_me_cce_id_to_cord.sv"] \
  [file normalize "${origin_dir}/rtl/bp_me/src/v/network/bp_me_wormhole_to_burst.sv"] \
@@ -502,10 +504,12 @@ set files [list \
  [file normalize "${origin_dir}/rtl/bp_me/src/v/network/bp_me_cce_to_mem_link_send.sv"] \
  [file normalize "${origin_dir}/rtl/bp_me/src/v/network/bp_me_cord_to_id.sv"] \
  [file normalize "${origin_dir}/rtl/bp_me/src/v/network/bp_me_lce_id_to_cord.sv"] \
- [file normalize "${origin_dir}/rtl/bp_me/src/v/network/bp_me_wormhole_packet_encode_lce_cmd.sv"] \
- [file normalize "${origin_dir}/rtl/bp_me/src/v/network/bp_me_wormhole_packet_encode_lce_req.sv"] \
- [file normalize "${origin_dir}/rtl/bp_me/src/v/network/bp_me_wormhole_packet_encode_lce_resp.sv"] \
- [file normalize "${origin_dir}/rtl/bp_me/src/v/network/bp_me_wormhole_packet_encode_mem.sv"] \
+ [file normalize "${origin_dir}/rtl/bp_me/src/v/network/bp_me_bedrock_wormhole_header_encode_lce_cmd.sv"] \
+ [file normalize "${origin_dir}/rtl/bp_me/src/v/network/bp_me_bedrock_wormhole_header_encode_lce_fill.sv"] \
+ [file normalize "${origin_dir}/rtl/bp_me/src/v/network/bp_me_bedrock_wormhole_header_encode_lce_req.sv"] \
+ [file normalize "${origin_dir}/rtl/bp_me/src/v/network/bp_me_bedrock_wormhole_header_encode_lce_resp.sv"] \
+ [file normalize "${origin_dir}/rtl/bp_me/src/v/network/bp_me_bedrock_wormhole_header_encode.sv"] \
+ [file normalize "${origin_dir}/rtl/bp_me/src/v/network/bp_me_bedrock_mem_to_link.sv"] \
  [file normalize "${origin_dir}/rtl/bp_me/src/v/network/bp_me_xbar_stream.sv"] \
  [file normalize "${origin_dir}/rtl/bp_me/src/v/network/bp_me_stream_pump_in.sv"] \
  [file normalize "${origin_dir}/rtl/bp_me/src/v/network/bp_me_stream_pump_out.sv"] \
@@ -517,10 +521,8 @@ set files [list \
  [file normalize "${origin_dir}/rtl/bp_top/src/v/bp_unicore_lite.sv"] \
  [file normalize "${origin_dir}/rtl/bp_top/src/v/bp_nd_socket.sv"] \
  [file normalize "${origin_dir}/rtl/bp_common/src/v/bp_pma.sv"] \
- [file normalize "${origin_dir}/rtl/bp_common/src/v/bsg_parallel_in_serial_out_passthrough_dynamic.v"] \
  [file normalize "${origin_dir}/rtl/bp_common/src/v/bsg_parallel_in_serial_out_passthrough_dynamic_last.v"] \
- [file normalize "${origin_dir}/rtl/bp_common/src/v/bsg_serial_in_parallel_out_passthrough_dynamic_last.v"] \
- [file normalize "${origin_dir}/rtl/bp_common/src/v/bsg_serial_in_parallel_out_passthrough_dynamic.v"] \
+ [file normalize "${origin_dir}/rtl/bp_common/src/v/bsg_serial_in_parallel_out_passthrough_last.v"] \
  [file normalize "${origin_dir}/rtl/bp_common/src/v/bsg_dff_sync_read.v"] \
  [file normalize "${origin_dir}/rtl/external/basejump_stl/bsg_dataflow/bsg_serial_in_parallel_out_passthrough.v"] \
  [file normalize "${origin_dir}/rtl/external/basejump_stl/bsg_dataflow/bsg_parallel_in_serial_out_passthrough.v"] \
@@ -602,8 +604,8 @@ set files [list \
  [file normalize "${origin_dir}/../common/v/bsg_m_axi_lite_to_fifo.v"] \
  [file normalize "${origin_dir}/rtl/external/basejump_stl/bsg_mem/bsg_mem_1r1w.v"] \
  [file normalize "${origin_dir}/rtl/external/basejump_stl/bsg_mem/bsg_mem_1r1w_one_hot.v"] \
- [file normalize "${origin_dir}/rtl/external/basejump_stl/bsg_mem/bsg_mem_1r1w_sync.v"] \
- [file normalize "${origin_dir}/rtl/external/basejump_stl/bsg_mem/bsg_mem_1r1w_sync_synth.v"] \
+ [file normalize "${origin_dir}/rtl/bp_common/src/v/bsg_mem_1r1w_sync.v"] \
+ [file normalize "${origin_dir}/rtl/bp_common/src/v/bsg_mem_1r1w_sync_synth.v"] \
  [file normalize "${origin_dir}/rtl/external/basejump_stl/bsg_mem/bsg_mem_1r1w_synth.v"] \
  [file normalize "${origin_dir}/rtl/external/basejump_stl/bsg_mem/bsg_mem_1rw_sync.v"] \
  [file normalize "${origin_dir}/rtl/external/basejump_stl/hard/ultrascale_plus/bsg_mem/bsg_mem_1rw_sync_mask_write_bit.v"] \
@@ -1145,7 +1147,17 @@ set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
 
+set file "$origin_dir/rtl/bp_me/src/v/lce/bp_lce_fill.sv"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
+
 set file "$origin_dir/rtl/bp_me/src/v/lce/bp_lce_req.sv"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
+
+set file "$origin_dir/rtl/bp_me/src/v/network/bp_me_burst_gearbox.sv"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
@@ -1225,22 +1237,32 @@ set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
 
-set file "$origin_dir/rtl/bp_me/src/v/network/bp_me_wormhole_packet_encode_lce_cmd.sv"
+set file "$origin_dir/rtl/bp_me/src/v/network/bp_me_bedrock_mem_to_link.sv"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
 
-set file "$origin_dir/rtl/bp_me/src/v/network/bp_me_wormhole_packet_encode_lce_req.sv"
+set file "$origin_dir/rtl/bp_me/src/v/network/bp_me_bedrock_wormhole_header_encode_lce_cmd.sv"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
 
-set file "$origin_dir/rtl/bp_me/src/v/network/bp_me_wormhole_packet_encode_lce_resp.sv"
+set file "$origin_dir/rtl/bp_me/src/v/network/bp_me_bedrock_wormhole_header_encode_lce_fill.sv"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
 
-set file "$origin_dir/rtl/bp_me/src/v/network/bp_me_wormhole_packet_encode_mem.sv"
+set file "$origin_dir/rtl/bp_me/src/v/network/bp_me_bedrock_wormhole_header_encode_lce_req.sv"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
+
+set file "$origin_dir/rtl/bp_me/src/v/network/bp_me_bedrock_wormhole_header_encode_lce_resp.sv"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
+
+set file "$origin_dir/rtl/bp_me/src/v/network/bp_me_bedrock_wormhole_header_encode.sv"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
@@ -1301,22 +1323,12 @@ set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
 
-set file "$origin_dir/rtl/bp_common/src/v/bsg_parallel_in_serial_out_passthrough_dynamic.v"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
-set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
-
 set file "$origin_dir/rtl/bp_common/src/v/bsg_parallel_in_serial_out_passthrough_dynamic_last.v"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
 
-set file "$origin_dir/rtl/bp_common/src/v/bsg_serial_in_parallel_out_passthrough_dynamic_last.v"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
-set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
-
-set file "$origin_dir/rtl/bp_common/src/v/bsg_serial_in_parallel_out_passthrough_dynamic.v"
+set file "$origin_dir/rtl/bp_common/src/v/bsg_serial_in_parallel_out_passthrough_last.v"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
@@ -1727,12 +1739,12 @@ set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
 
-set file "$origin_dir/rtl/external/basejump_stl/bsg_mem/bsg_mem_1r1w_sync.v"
+set file "$origin_dir/rtl/bp_common/src/v/bsg_mem_1r1w_sync.v"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
 
-set file "$origin_dir/rtl/external/basejump_stl/bsg_mem/bsg_mem_1r1w_sync_synth.v"
+set file "$origin_dir/rtl/bp_common/src/v/bsg_mem_1r1w_sync_synth.v"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj

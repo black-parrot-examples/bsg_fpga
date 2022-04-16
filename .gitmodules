@@ -1,0 +1,12 @@
+[submodule "vu37p/rtl"]
+	path = vu37p/rtl
+	url = https://github.com/black-parrot/black-parrot
+[submodule "vu37p/sdk"]
+	path = vu37p/sdk
+	url = https://github.com/black-parrot-sdk/black-parrot-sdk
+[submodule "vu37p/tools"]
+	path = vu37p/tools
+	url = https://github.com/black-parrot/black-parrot-tools
+[submodule "vu37p/xdma"]
+	path = vu37p/xdma
+	url = https://github.com/gaozihou/dma_ip_drivers

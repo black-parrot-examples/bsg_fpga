@@ -12,16 +12,8 @@ else ifeq ($(GIT_CLONE_STYLE),https)
 endif
 
 rtl_dir := $(THIS_DIR)/rtl
-rtl_url := $(GITHUB)black-parrot/black-parrot
-rtl_commit :=219612
-
 sdk_dir := $(THIS_DIR)/sdk
-sdk_url := $(GITHUB)black-parrot-sdk/black-parrot-sdk
-sdk_commit :=2429a3
-
 xdma_dir := $(THIS_DIR)/tools
-xdma_url := $(GITHUB)gaozihou/dma_ip_drivers
-xdma_commit := master
 
 vivado_bin := $(XILINX_VIVADO)/bin/vivado
 
@@ -37,13 +29,6 @@ update_tcl_dir := $(script_dir)/update_tcl.tcl
 
 all: libs
 libs: $(rtl_dir)
-$(rtl_dir):
-	git clone -b $(rtl_commit) $(rtl_url) $(rtl_dir)
-$(sdk_dir):
-	git clone -b $(sdk_commit) $(sdk_url) $(sdk_dir)
-$(xdma_dir):
-	git clone -b $(xdma_commit) $(xdma_url) $(xdma_dir)
-
 
 prep: $(rtl_dir) $(sdk_dir) $(xdma_dir)
 	$(MAKE) -C $(rtl_dir) libs
