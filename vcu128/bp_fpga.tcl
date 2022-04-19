@@ -131,7 +131,7 @@ if {[string equal [get_filesets -quiet sources_1] ""]} {
 
 ## Automatically discover BlackParrot source files
 # reads the top-level flist and returns a 2-element list: [list $include_dirs $source_files]
-proc load_bp_sources_from_flist { blackparrot_dir } {
+proc load_bp_sources_from_flist { blackparrot_dir origin_dir } {
   # Set include vars used in flists
   set BP_TOP_DIR "$blackparrot_dir/bp_top/"
   set BP_COMMON_DIR "$blackparrot_dir/bp_common/"
@@ -162,6 +162,18 @@ proc load_bp_sources_from_flist { blackparrot_dir } {
         lappend source_files $normalized
       } elseif {[string match "*bsg_mem_1rw_sync_mask_write_bit_synth.v" $x]} {
         # omit this file, it's unused now that we've replaced the bsg_mem_1rw_sync_mask_write_bit module above
+      } elseif {[string match "*bsg_mem_1rw_sync_mask_write_byte.v" $x]} {
+        # bitmasked memories are incorrectly inferred in Kintex 7 and Ultrascale+ FPGAs, this version maps into lutram correctly
+        set replace_hard "$origin_dir/v/bsg_mem_1rw_sync_mask_write_byte.v"
+        set expanded [subst $replace_hard]
+        set normalized [file normalize $expanded]
+        lappend source_files $normalized
+        set bytewrite_bram "$origin_dir/v/bytewrite_bram.v"
+        set expanded [subst $bytewrite_bram]
+        set normalized [file normalize $expanded]
+        lappend source_files $normalized
+      } elseif {[string match "*bsg_mem_1rw_sync_mask_write_byte_synth.v" $x]} {
+        # omit this file, it's unused now
       } else {
         set expanded [subst $x]
         set normalized [file normalize $expanded]
@@ -173,7 +185,7 @@ proc load_bp_sources_from_flist { blackparrot_dir } {
   list $include_dirs $source_files
 }
 
-lassign [load_bp_sources_from_flist $blackparrot_dir] flist_include_dirs flist_source_files
+lassign [load_bp_sources_from_flist $blackparrot_dir $origin_dir] flist_include_dirs flist_source_files
 
 add_files -norecurse -scan_for_includes -fileset sources_1 $flist_source_files
 
