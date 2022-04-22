@@ -13,12 +13,10 @@ endif
 rtl_dir := $(TOP)/rtl
 rtl_url := $(GITHUB)black-parrot/black-parrot
 rtl_commit := 2f5ebd66
-# 2f5ebd66 - me_dev before bump to latest dev
 
 sdk_dir := $(TOP)/sdk
 sdk_url := $(GITHUB)black-parrot-sdk/black-parrot-sdk
-sdk_commit := 27fce36
-# 1d1c9fd - linux bump plus splash3
+sdk_commit := 9412acd
 
 xdma_dir := $(TOP)/tools
 xdma_url := $(GITHUB)muwyse/dma_ip_drivers
